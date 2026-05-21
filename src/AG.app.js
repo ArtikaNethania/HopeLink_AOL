@@ -12,7 +12,7 @@ const volunteerRoutes = require('./routes/AG.volunteer.routes');
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: '*', credentials: true }));
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,6 +25,9 @@ app.use('/api/volunteers', volunteerRoutes);
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
 });
+
+const authRoutes = require('./routes/CA.auth.routes');
+app.use('/api/auth', authRoutes);
 
 app.use(errorHandler);
 
