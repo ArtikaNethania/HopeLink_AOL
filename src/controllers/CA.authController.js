@@ -116,8 +116,57 @@ const authController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async updateProfile(req, res, next) {
+    try {
+      const { name, email, phone_number } = req.body;
+
+      if (!name || !email) {
+        return res.status(400).json({
+          success: false,
+          message: 'Name and email are required'
+        });
+      }
+
+      const user = await User.findByPk(req.user.userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      if (email !== user.email) {
+        const existing = await User.findOne({ where: { email } });
+        if (existing) {
+          return res.status(409).json({
+            success: false,
+            message: 'Email already in use'
+          });
+        }
+      }
+
+      user.name = name;
+      user.email = email;
+      if (phone_number) user.phone_number = phone_number;
+      await user.save();
+
+      res.json({
+        success: true,
+        message: 'Profile updated',
+        data: {
+          user_id: user.user_id,
+          name: user.name,
+          email: user.email,
+          phone_number: user.phone_number,
+          role: user.role
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 
 module.exports = authController;
-

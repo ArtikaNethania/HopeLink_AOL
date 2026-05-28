@@ -25,7 +25,7 @@ const Service = sequelize.define('Service', {
     }
   },
   service_type: {
-    type: DataTypes.VARCHAR(100)
+    type: DataTypes.STRING(100)
   },
   start_date: {
     type: DataTypes.DATE

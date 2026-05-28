@@ -89,17 +89,17 @@ const volunteerController = {
     try {
       const { userId } = req.params;
 
-      const services = await Service.findAll({
-        where: { volunteer_id: userId },
+      const applications = await VolunteerApplication.findAll({
+        where: { user_id: userId },
         include: [{
           model: Community,
-          attributes: ['community_id', 'name']
+          attributes: ['community_id', 'name', 'location']
         }]
       });
 
       res.json({
         success: true,
-        data: services
+        data: applications
       });
     } catch (error) {
       next(error);
