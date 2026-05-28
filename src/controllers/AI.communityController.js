@@ -89,6 +89,35 @@ const communityController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async getMyCommunity(req, res, next) {
+    try {
+      const { userId } = req.user;
+
+      const community = await Community.findOne({
+        where: { community_rep_id: userId },
+        include: [{
+          model: User,
+          as: 'representative',
+          attributes: ['user_id', 'name', 'email']
+        }]
+      });
+
+      if (!community) {
+        return res.status(404).json({
+          success: false,
+          message: 'Community not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: community
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 

@@ -2210,6 +2210,67 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════ COMMUNITY PROFILE PAGE -->
+<div id="page-community-profile" class="page">
+  <div style="max-width:860px;margin:0 auto;padding:2rem 2.5rem;">
+    <!-- Back button -->
+    <button onclick="goBackFromCommunity()" style="display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text2);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;margin-bottom:1.5rem;padding:0;transition:color 0.2s;" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text2)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+
+    <!-- Profile header -->
+    <div class="comm-profile-header" id="cp-header">
+      <div class="comm-cover" id="cp-cover" style="cursor:default;"></div>
+      <div class="comm-profile-row">
+        <div class="comm-avatar" id="cp-avatar" style="cursor:default;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+        </div>
+        <div class="comm-profile-info">
+          <div class="comm-profile-name" id="cp-name">-</div>
+          <div class="comm-profile-meta">
+            <span id="cp-loc">-</span>
+            <span id="cp-cat-wrap" style="display:none;"><span class="rep-hero-dot">·</span><span id="cp-cat"></span></span>
+            <span class="rep-hero-dot">·</span>
+            <span class="comm-verified-badge">✓ Verified</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.6rem;margin-left:auto;align-self:center;">
+          <button class="btn btn-purple btn-sm" id="cp-donate-btn" onclick="openDonateFromProfile()">Donate</button>
+          <button class="btn btn-outline btn-sm" id="cp-vol-btn" onclick="openVolunteerFromProfile()">Volunteer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="comm-stats-bar">
+      <div class="comm-stat"><div class="comm-stat-val" id="cp-donations">Rp 0</div><div class="comm-stat-lbl">Donations</div></div>
+      <div class="comm-stat-div"></div>
+      <div class="comm-stat"><div class="comm-stat-val" id="cp-volunteers">-</div><div class="comm-stat-lbl">Volunteers</div></div>
+      <div class="comm-stat-div"></div>
+      <div class="comm-stat"><div class="comm-stat-val" id="cp-events">-</div><div class="comm-stat-lbl">Activities</div></div>
+    </div>
+
+    <!-- About & Contact -->
+    <div class="comm-about-grid">
+      <div class="comm-about-card">
+        <div class="comm-about-title">About</div>
+        <div class="comm-about-bio" id="cp-desc">-</div>
+      </div>
+      <div class="comm-about-card">
+        <div class="comm-about-title">Contact</div>
+        <div id="cp-contact"></div>
+      </div>
+    </div>
+
+    <!-- Posts feed -->
+    <div class="comm-about-title" style="margin-bottom:0.75rem;">Posts</div>
+    <div id="cp-posts">
+      <div class="empty-state"><p>No posts yet from this community.</p></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const API = 'http://localhost:8080/api';
 let token = localStorage.getItem('hl_token');
@@ -2609,7 +2670,10 @@ function showDashSection(section) {
   if (sb) sb.classList.add('active');
 
   // Show section
-  document.querySelectorAll('.dash-section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.dash-section').forEach(el => {
+    el.classList.remove('active');
+    el.style.display = '';
+  });
   const ds = document.getElementById('dash-' + section);
   if (ds) ds.classList.add('active');
 
@@ -2633,7 +2697,7 @@ function showAlert(id, msg, type) {
 }
 
 // COMMUNITY CARD HTML
-function communityCardHTML(c, showDesc = false) {
+function communityCardHTML(c, showDesc = false, fromPage = 'communities') {
   const id = c.community_id || c.id;
   const name = c.name || c.community_name || 'Community';
   const loc = c.location || c.city || '-';
@@ -2650,9 +2714,12 @@ function communityCardHTML(c, showDesc = false) {
       </div>
       ${showDesc && desc ? `<div class="desc">${desc}</div>` : ''}
       <span class="badge">Verified</span>
-      <div class="card-btns">
-        <button class="btn btn-purple" onclick="openDonate(${id}, '${name.replace(/'/g,"\\'")}')">Donate</button>
-        <button class="btn btn-outline" onclick="openVolunteer(${id}, '${name.replace(/'/g,"\\'")}')">Volunteer</button>
+      <div class="card-btns" style="flex-direction:column;gap:6px;">
+        <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="openCommunityProfile(${id}, '${fromPage}')">View</button>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-purple" style="flex:1;justify-content:center;" onclick="openDonate(${id}, '${name.replace(/'/g,"\\'")}')">Donate</button>
+          <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="openVolunteer(${id}, '${name.replace(/'/g,"\\'")}')">Volunteer</button>
+        </div>
       </div>
     </div>`;
 }
@@ -2666,7 +2733,7 @@ async function loadHomeCommunities() {
     document.getElementById('stat-communities').textContent = allCommunities.length || '124';
     const el = document.getElementById('home-communities');
     if (!allCommunities.length) { el.innerHTML = '<p style="color:var(--text2)">Belum ada komunitas.</p>'; return; }
-    el.innerHTML = allCommunities.slice(0, 3).map(c => communityCardHTML(c, true)).join('');
+    el.innerHTML = allCommunities.slice(0, 3).map(c => communityCardHTML(c, true, 'communities')).join('');
   } catch(e) {
     document.getElementById('home-communities').innerHTML = '<p style="color:var(--text2)">Tidak bisa load komunitas.</p>';
   }
@@ -2690,7 +2757,7 @@ function renderCommunities(list) {
   const countEl = document.getElementById('communities-count');
   if (countEl) countEl.textContent = list.length + ' ' + t('commFound');
   if (!list.length) { el.innerHTML = '<p style="color:var(--text2)">Tidak ada komunitas ditemukan.</p>'; return; }
-  el.innerHTML = list.map(c => communityCardHTML(c, true)).join('');
+  el.innerHTML = list.map(c => communityCardHTML(c, true, 'communities')).join('');
 }
 
 function filterCommunities() {
@@ -2721,7 +2788,7 @@ function renderDashCommunities(list) {
   const countEl = document.getElementById('dash-communities-count');
   if (countEl) countEl.textContent = list.length + ' ' + t('commFound');
   if (!list.length) { el.innerHTML = '<p style="color:var(--text2)">No communities found.</p>'; return; }
-  el.innerHTML = list.map(c => communityCardHTML(c, true)).join('');
+  el.innerHTML = list.map(c => communityCardHTML(c, true, 'communities')).join('');
 }
 
 function filterDashCommunities() {
@@ -2747,7 +2814,7 @@ async function loadDashboard() {
     const commData = await commRes.json();
     const communities = commData.data || commData || [];
     const dashComm = document.getElementById('dash-communities');
-    dashComm.innerHTML = communities.slice(0, 4).map(c => communityCardHTML(c, false)).join('') || '<p style="color:var(--text2)">Belum ada komunitas.</p>';
+    dashComm.innerHTML = communities.slice(0, 4).map(c => communityCardHTML(c, false, 'dashboard-browse')).join('') || '<p style="color:var(--text2)">Belum ada komunitas.</p>';
 
     if (donRes.ok) {
       const donData = await donRes.json();
@@ -2960,14 +3027,15 @@ async function doLogin() {
     // Community rep — fetch their community BEFORE navigating
     if (user.role === 'community_rep') {
       try {
-        const commRes = await fetch(API + '/communities', {
+        const commRes = await fetch(API + '/communities/my', {
           headers: { Authorization: 'Bearer ' + token }
         });
-        const commData = await commRes.json();
-        const myCommunity = (commData.data || []).find(comm => comm.community_rep_id === user.user_id);
-        if (myCommunity) {
-          repCommunity = myCommunity;
-          localStorage.setItem('hl_rep_community', JSON.stringify(myCommunity));
+        if (commRes.ok) {
+          const commData = await commRes.json();
+          if (commData.data) {
+            repCommunity = commData.data;
+            localStorage.setItem('hl_rep_community', JSON.stringify(commData.data));
+          }
         }
       } catch(e) { console.error('Could not fetch community:', e); }
     }
@@ -3558,7 +3626,10 @@ let currentCommFilter = 'all';
 let currentUserFilter = 'all';
 
 function showAdminSection(section) {
-  document.querySelectorAll('.dash-section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.dash-section').forEach(el => {
+    el.classList.remove('active');
+    el.style.display = '';
+  });
   const ds = document.getElementById('dash-' + section);
   if (ds) ds.classList.add('active');
   document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
@@ -4319,16 +4390,13 @@ async function loadRepDashboard() {
 
   // Check if user has a community
   try {
-    const res = await fetch(API + '/communities', { headers: { Authorization: 'Bearer ' + token } });
-    const data = await res.json();
-    const communities = data.data || data || [];
-    const uid = user.user_id || user.id;
-    repCommunity = communities.find(comm => comm.community_rep_id === uid) || null;
-
-    // Also check pending/rejected — need to get all, not just approved
-    if (!repCommunity) {
-      // Try fetching by rep — backend only returns approved, so if not found = no community or pending/rejected
-      // We store pending community in localStorage after submit
+    const res = await fetch(API + '/communities/my', { headers: { Authorization: 'Bearer ' + token } });
+    if (res.ok) {
+      const data = await res.json();
+      repCommunity = data.data || null;
+      if (repCommunity) localStorage.setItem('hl_rep_community', JSON.stringify(repCommunity));
+    } else {
+      // Not found — check localStorage for pending
       const stored = localStorage.getItem('hl_rep_community');
       if (stored) repCommunity = JSON.parse(stored);
     }
@@ -4424,6 +4492,100 @@ function handleEvPhoto(event) {
     if (prev) prev.innerHTML = '<img src="' + evPhotoData + '" style="height:80px;border-radius:8px;border:1px solid var(--border);" />';
   };
   reader.readAsDataURL(file);
+}
+
+
+let currentProfileCommunity = null;
+let previousPage = 'communities'; // track where user came from
+
+async function openCommunityProfile(communityId, fromPage) {
+  previousPage = fromPage || 'communities';
+  // Find community from loaded data first
+  let comm = allCommunities.find(c => (c.community_id || c.id) === communityId)
+    || allDashCommunities.find(c => (c.community_id || c.id) === communityId);
+  // If not found locally, fetch from backend
+  if (!comm) {
+    try {
+      const res = await fetch(API + '/communities/' + communityId);
+      const data = await res.json();
+      comm = data.data || null;
+    } catch(e) { console.error('Could not fetch community:', e); }
+  }
+  if (!comm) return;
+  currentProfileCommunity = comm;
+  renderCommunityProfile(comm);
+  showPage('community-profile');
+}
+
+function renderCommunityProfile(comm) {
+  // Cover
+  const cover = document.getElementById('cp-cover');
+  if (cover) cover.style.background = 'linear-gradient(135deg, var(--purple), var(--teal))';
+
+  // Avatar
+  const avatar = document.getElementById('cp-avatar');
+  if (avatar) avatar.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>';
+
+  // Info
+  const nameEl = document.getElementById('cp-name');
+  const locEl = document.getElementById('cp-loc');
+  const catEl = document.getElementById('cp-cat');
+  const catWrap = document.getElementById('cp-cat-wrap');
+  if (nameEl) nameEl.textContent = comm.name || '-';
+  if (locEl) locEl.textContent = comm.location || '-';
+  if (catEl) catEl.textContent = comm.category || '';
+  if (catWrap) catWrap.style.display = comm.category ? 'inline' : 'none';
+
+  // Stats
+  const totalDon = parseFloat(comm.total_donations) || 0;
+  const cpD = document.getElementById('cp-donations');
+  if (cpD) cpD.textContent = 'Rp ' + totalDon.toLocaleString('id');
+  document.getElementById('cp-volunteers').textContent = '-';
+  document.getElementById('cp-events').textContent = '-';
+
+  // About
+  const descEl = document.getElementById('cp-desc');
+  if (descEl) descEl.textContent = comm.description || 'No description available.';
+
+  // Contact
+  const contactEl = document.getElementById('cp-contact');
+  if (contactEl) {
+    let html = '';
+    const rep = comm.representative;
+    if (rep?.name) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' + rep.name + '</div>';
+    if (rep?.email) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:' + rep.email + '">' + rep.email + '</a></div>';
+    if (!html) html = '<div style="color:var(--text2);font-size:0.85rem;">No contact info available.</div>';
+    contactEl.innerHTML = html;
+  }
+
+  // Posts — empty for now (no backend yet)
+  document.getElementById('cp-posts').innerHTML = '<div class="empty-state"><p>No posts yet from this community.</p></div>';
+}
+
+function goBackFromCommunity() {
+  if (previousPage === 'dashboard-browse') {
+    showDashSection('browse');
+  } else if (token && user) {
+    showDashSection('browse');
+  } else {
+    showPage('communities');
+  }
+}
+
+function openDonateFromProfile() {
+  if (!currentProfileCommunity) return;
+  if (!token) { showPage('login'); return; }
+  const id = currentProfileCommunity.community_id || currentProfileCommunity.id;
+  const name = currentProfileCommunity.name;
+  openDonate(id, name);
+}
+
+function openVolunteerFromProfile() {
+  if (!currentProfileCommunity) return;
+  if (!token) { showPage('login'); return; }
+  const id = currentProfileCommunity.community_id || currentProfileCommunity.id;
+  const name = currentProfileCommunity.name;
+  openVolunteer(id, name);
 }
 
 // INIT
