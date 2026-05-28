@@ -10,18 +10,12 @@ const volunteerController = {
       const { userId } = req.user;
 
       if (!community_id) {
-        return res.status(400).json({
-          success: false,
-          message: 'Komunitas harus diisi'
-        });
+        return res.status(400).json({ success: false, message: 'Komunitas harus diisi' });
       }
 
       const community = await Community.findByPk(community_id);
       if (!community) {
-        return res.status(404).json({
-          success: false,
-          message: 'Komunitas tidak ditemukan'
-        });
+        return res.status(404).json({ success: false, message: 'Komunitas tidak ditemukan' });
       }
 
       const existing = await VolunteerApplication.findOne({
@@ -29,10 +23,7 @@ const volunteerController = {
       });
 
       if (existing && existing.status === 'pending') {
-        return res.status(409).json({
-          success: false,
-          message: 'Sudah ada aplikasi pending'
-        });
+        return res.status(409).json({ success: false, message: 'Sudah ada aplikasi pending' });
       }
 
       const application = await VolunteerApplication.create({
@@ -41,11 +32,7 @@ const volunteerController = {
         status: 'pending'
       });
 
-      res.status(201).json({
-        success: true,
-        message: 'Aplikasi volunteer berhasil disubmit',
-        data: application
-      });
+      res.status(201).json({ success: true, message: 'Aplikasi volunteer berhasil disubmit', data: application });
     } catch (error) {
       next(error);
     }
@@ -58,10 +45,7 @@ const volunteerController = {
 
       const application = await VolunteerApplication.findByPk(applicationId);
       if (!application) {
-        return res.status(404).json({
-          success: false,
-          message: 'Aplikasi tidak ditemukan'
-        });
+        return res.status(404).json({ success: false, message: 'Aplikasi tidak ditemukan' });
       }
 
       application.status = status;
@@ -75,11 +59,7 @@ const volunteerController = {
         });
       }
 
-      res.json({
-        success: true,
-        message: 'Aplikasi diupdate',
-        data: application
-      });
+      res.json({ success: true, message: 'Aplikasi diupdate', data: application });
     } catch (error) {
       next(error);
     }
@@ -91,16 +71,45 @@ const volunteerController = {
 
       const applications = await VolunteerApplication.findAll({
         where: { user_id: userId },
-        include: [{
-          model: Community,
-          attributes: ['community_id', 'name', 'location']
-        }]
+        include: [{ model: Community, attributes: ['community_id', 'name', 'location'] }]
       });
 
-      res.json({
-        success: true,
-        data: applications
+      res.json({ success: true, data: applications });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getVolunteersByCommunity(req, res, next) {
+    try {
+      const { communityId } = req.params;
+
+      const applications = await VolunteerApplication.findAll({
+        where: { community_id: communityId },
+        include: [{ model: User, attributes: ['user_id', 'name', 'email', 'phone_number'] }],
+        order: [['createdAt', 'DESC']]
       });
+
+      res.json({ success: true, data: applications });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async updateVolunteerStatus(req, res, next) {
+    try {
+      const { applicationId } = req.params;
+      const { status } = req.body;
+
+      const application = await VolunteerApplication.findByPk(applicationId);
+      if (!application) {
+        return res.status(404).json({ success: false, message: 'Aplikasi tidak ditemukan' });
+      }
+
+      application.status = status;
+      await application.save();
+
+      res.json({ success: true, message: 'Status diupdate', data: application });
     } catch (error) {
       next(error);
     }

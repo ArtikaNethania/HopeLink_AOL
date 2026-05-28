@@ -23,6 +23,15 @@ const Community = sequelize.define('Community', {
   description: {
     type: DataTypes.TEXT
   },
+  contact_phone: {
+    type: DataTypes.STRING(20)
+  },
+  instagram: {
+    type: DataTypes.STRING(100)
+  },
+  website: {
+    type: DataTypes.STRING(255)
+  },
   verification_status: {
     type: DataTypes.ENUM('pending', 'approved', 'rejected'),
     defaultValue: 'pending'
@@ -49,4 +58,3 @@ Community.belongsTo(User, {
 });
 
 module.exports = Community;
-

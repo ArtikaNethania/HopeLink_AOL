@@ -1281,12 +1281,12 @@
   <div class="auth-wrap">
     <div class="auth-box">
 <h2>Sign in</h2>
-      <p>Login ke akun HopeLink kamu</p>
+      <p>Sign in to your HopeLink account</p>
       <div id="login-alert"></div>
       <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="email@example.com" autocomplete="off" /></div>
       <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="Password" autocomplete="off" /></div>
       <button class="btn btn-purple auth-submit" onclick="doLogin()">Login</button>
-      <div class="auth-switch">Belum punya akun? <a onclick="showPage('register')">Daftar sekarang</a></div>
+      <div class="auth-switch">Don't have an account? <a onclick="showPage('register')">Register now</a></div>
     </div>
   </div>
 </div>
@@ -1407,13 +1407,13 @@
 <div id="page-communities" class="page">
   <div class="communities-hero">
     <div class="communities-hero-inner">
-      <p class="communities-hero-tag">Temukan &middot; Hubungkan &middot; Bantu</p>
+      <p class="communities-hero-tag">Find &middot; Connect &middot; Help</p>
       <h1 class="communities-hero-title" id="comm-hero-title">Browse Communities</h1>
-      <p class="communities-hero-sub">Ribuan komunitas menanti dukunganmu. Mulai dengan mencari komunitas yang paling kamu pedulikan.</p>
+      <p class="communities-hero-sub">Thousands of communities await your support. Start by searching for the one you care about most.</p>
       <div class="search-wrap">
         <div class="search-box">
           <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" id="search-input" placeholder="Cari nama komunitas atau lokasi..." oninput="filterCommunities()" />
+          <input type="text" id="search-input" placeholder="Search community name or location..." oninput="filterCommunities()" />
         </div>
       </div>
     </div>
@@ -1421,7 +1421,7 @@
   <div class="section" style="padding-top:2rem;">
     <div id="communities-count" style="font-size:0.82rem;color:var(--text2);margin-bottom:1.25rem;"></div>
     <div class="community-grid" id="communities-list">
-      <div class="loading-wrap"><div class="spinner"></div><p>Memuat komunitas...</p></div>
+      <div class="loading-wrap"><div class="spinner"></div><p>Loading communities...</p></div>
     </div>
   </div>
 </div>
@@ -1530,7 +1530,7 @@
         <div class="dash-browse-header">
           <div class="dash-greeting" style="margin-bottom:0;">
             <h2>Browse Communities</h2>
-            <p>Temukan komunitas yang butuh dukunganmu</p>
+            <p>Find communities that need your support</p>
           </div>
           <div class="dash-search-wrap">
             <div class="dash-search-box">
@@ -1549,7 +1549,7 @@
       <div class="dash-section" id="dash-donations">
         <div class="dash-greeting">
           <h2>My Donations</h2>
-          <p>Riwayat donasi yang sudah kamu buat</p>
+          <p>Your donation history</p>
         </div>
         <div id="donations-list"><div class="loading-wrap"><div class="spinner"></div><p>Loading...</p></div></div>
       </div>
@@ -1558,7 +1558,7 @@
       <div class="dash-section" id="dash-volunteer">
         <div class="dash-greeting">
           <h2>My Volunteer Applications</h2>
-          <p>Status aplikasi volunteer kamu</p>
+          <p>Your volunteer application status</p>
         </div>
         <div id="volunteer-list"><div class="loading-wrap"><div class="spinner"></div><p>Loading...</p></div></div>
       </div>
@@ -1566,8 +1566,8 @@
       <!-- PROFILE -->
       <div class="dash-section" id="dash-profile">
         <div class="dash-greeting">
-          <h2>Profil Saya</h2>
-          <p>Informasi akun kamu di HopeLink</p>
+          <h2>My Profile</h2>
+          <p>Your HopeLink account information</p>
         </div>
         <div class="profile-layout">
           <div class="profile-sidebar-card">
@@ -2151,12 +2151,12 @@
     <div class="modal-header">
       <div>
         <h3>Donate</h3>
-        <p>untuk <strong id="donate-target"></strong></p>
+        <p>to <strong id="donate-target"></strong></p>
       </div>
       <button class="modal-close" onclick="closeModal('modal-donate')">&times;</button>
     </div>
     <div id="donate-alert"></div>
-    <div class="form-group"><label>Pilih nominal</label>
+    <div class="form-group"><label>Select amount</label>
       <div class="amount-grid">
         <button class="amount-btn" onclick="selectAmount(10000, this)">Rp 10.000</button>
         <button class="amount-btn" onclick="selectAmount(25000, this)">Rp 25.000</button>
@@ -2166,11 +2166,11 @@
         <button class="amount-btn" onclick="selectAmount(500000, this)">Rp 500.000</button>
       </div>
     </div>
-    <div class="form-group"><label>Atau masukkan nominal lain</label><input type="number" id="donate-amount" placeholder="Contoh: 75000" /></div>
-    <div class="form-group"><label>Pesan (opsional)</label><textarea id="donate-message" placeholder="Tulis pesan untuk komunitas..."></textarea></div>
+    <div class="form-group"><label>Or enter a custom amount</label><input type="number" id="donate-amount" placeholder="e.g. 75000" /></div>
+    <div class="form-group"><label>Pesan (opsional)</label><textarea id="donate-message" placeholder="Write a message to the community..."></textarea></div>
     <div class="modal-btns">
-      <button class="btn btn-outline" onclick="closeModal('modal-donate')">Batal</button>
-      <button class="btn btn-purple" onclick="submitDonate()">Kirim Donasi</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-donate')">Cancel</button>
+      <button class="btn btn-purple" onclick="submitDonate()">Send Donation</button>
     </div>
   </div>
 </div>
@@ -2181,23 +2181,23 @@
     <div class="modal-header">
       <div>
         <h3>Apply Volunteer</h3>
-        <p>untuk <strong id="volunteer-target"></strong></p>
+        <p>to <strong id="volunteer-target"></strong></p>
       </div>
       <button class="modal-close" onclick="closeModal('modal-volunteer')">&times;</button>
     </div>
     <div id="volunteer-alert"></div>
-    <div class="form-group"><label>Skills / Keahlian</label><input type="text" id="vol-skills" placeholder="Contoh: mengajar, memasak, medis..." /></div>
-    <div class="form-group"><label>Ketersediaan waktu</label>
+    <div class="form-group"><label>Skills</label><input type="text" id="vol-skills" placeholder="e.g. teaching, cooking, medical..." /></div>
+    <div class="form-group"><label>Availability</label>
       <select id="vol-availability">
         <option value="weekend">Weekend</option>
         <option value="weekday">Weekday</option>
         <option value="flexible">Fleksibel</option>
       </select>
     </div>
-    <div class="form-group"><label>Motivasi</label><textarea id="vol-motivation" placeholder="Ceritakan kenapa kamu ingin bergabung..."></textarea></div>
+    <div class="form-group"><label>Motivation</label><textarea id="vol-motivation" placeholder="Tell us why you want to join..."></textarea></div>
     <div class="modal-btns">
-      <button class="btn btn-outline" onclick="closeModal('modal-volunteer')">Batal</button>
-      <button class="btn btn-teal" onclick="submitVolunteer()">Kirim Aplikasi</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-volunteer')">Cancel</button>
+      <button class="btn btn-teal" onclick="submitVolunteer()">Submit Application</button>
     </div>
   </div>
 </div>
@@ -2332,16 +2332,16 @@ const T = {
     login: 'Masuk', joinNow: 'Daftar', dashboard: 'Dasbor', logout: 'Keluar',
     browseCommunities: 'Jelajahi komunitas', registerOrg: 'Daftarkan organisasi',
     featuredComm: 'Komunitas pilihan', seeAll: 'Lihat semua',
-    searchPlaceholder: 'Cari nama komunitas atau lokasi...',
+    searchPlaceholder: 'Search community name or location...',
     dashOverview: 'Dasbor', dashBrowse: 'Jelajahi', dashDonations: 'Donasi Saya',
     dashVolunteer: 'Volunteer Saya', dashProfile: 'Profil',
     greetingSub: 'Ini aktivitas dukunganmu terkini.',
     totalDonated: 'Total Donasi', donationsMade: 'Jumlah Donasi', volunteerApps: 'Aplikasi Volunteer',
     commNearYou: 'Komunitas di sekitarmu',
-    browseSubtitle: 'Temukan komunitas yang butuh dukunganmu',
-    donationsTitle: 'Donasi Saya', donationsSubtitle: 'Riwayat donasi yang sudah kamu buat',
-    volunteerTitle: 'Aplikasi Volunteer Saya', volunteerSubtitle: 'Status aplikasi volunteer kamu',
-    profileTitle: 'Profil Saya', profileSubtitle: 'Informasi akun kamu di HopeLink',
+    browseSubtitle: 'Find communities that need your support',
+    donationsTitle: 'Donasi Saya', donationsSubtitle: 'Your donation history',
+    volunteerTitle: 'Aplikasi Volunteer Saya', volunteerSubtitle: 'Your volunteer application status',
+    profileTitle: 'My Profile', profileSubtitle: 'Your HopeLink account information',
     donate: 'Donasi', volunteer: 'Volunteer',
     profileInfoHeader: 'Informasi Akun',
     psmDonations: 'Donasi', psmVolunteer: 'Volunteer',
@@ -2360,14 +2360,14 @@ const T = {
     lblRegPhone: 'Nomor Telepon', lblPhone: 'Nomor Telepon', lblRepName: 'Nama Perwakilan', lblFullName2: 'Nama Lengkap',
     lblCommPhoto: 'Foto Komunitas', lblUploadHint: 'Klik untuk upload — JPG, PNG maks 5MB',
     editNameEmail: 'Edit nama & email',
-    saveChanges: 'Simpan perubahan', cancel: 'Batal',
+    saveChanges: 'Simpan perubahan', cancel: 'Cancel',
     lblFullName: 'Nama Lengkap', lblEmail: 'Email', lblRole: 'Peran', lblMemberSince: 'Bergabung sejak',
     profileSaveOk: 'Profil berhasil diperbarui.', profileErrName: 'Nama tidak boleh kosong.', profileErrEmail: 'Email tidak boleh kosong.',
     morning: 'Selamat pagi', afternoon: 'Selamat siang', evening: 'Selamat sore', night: 'Selamat malam',
     clickToChange: 'Klik untuk ganti foto',
     langBtn: 'EN',
     findConnect: 'Temukan · Hubungkan · Bantu',
-    browseSub: 'Ribuan komunitas menanti dukunganmu. Mulai dengan mencari komunitas yang paling kamu pedulikan.',
+    browseSub: 'Thousands of communities await your support. Start by searching for the one you care about most.',
     communities: 'Komunitas', volunteers: 'Relawan', donations: 'Donasi',
     commFound: 'komunitas ditemukan',
   }
@@ -2732,10 +2732,10 @@ async function loadHomeCommunities() {
     allCommunities = data.data || data || [];
     document.getElementById('stat-communities').textContent = allCommunities.length || '124';
     const el = document.getElementById('home-communities');
-    if (!allCommunities.length) { el.innerHTML = '<p style="color:var(--text2)">Belum ada komunitas.</p>'; return; }
+    if (!allCommunities.length) { el.innerHTML = '<p style="color:var(--text2)">No communities yet.</p>'; return; }
     el.innerHTML = allCommunities.slice(0, 3).map(c => communityCardHTML(c, true, 'communities')).join('');
   } catch(e) {
-    document.getElementById('home-communities').innerHTML = '<p style="color:var(--text2)">Tidak bisa load komunitas.</p>';
+    document.getElementById('home-communities').innerHTML = '<p style="color:var(--text2)">Could not load communities.</p>';
   }
 }
 
@@ -2748,7 +2748,7 @@ async function loadCommunities() {
     allCommunities = data.data || data || [];
     renderCommunities(allCommunities);
   } catch(e) {
-    document.getElementById('communities-list').innerHTML = '<p style="color:var(--text2);padding:1rem;">Tidak bisa load komunitas.</p>';
+    document.getElementById('communities-list').innerHTML = '<p style="color:var(--text2);padding:1rem;">Could not load communities.</p>';
   }
 }
 
@@ -2756,7 +2756,7 @@ function renderCommunities(list) {
   const el = document.getElementById('communities-list');
   const countEl = document.getElementById('communities-count');
   if (countEl) countEl.textContent = list.length + ' ' + t('commFound');
-  if (!list.length) { el.innerHTML = '<p style="color:var(--text2)">Tidak ada komunitas ditemukan.</p>'; return; }
+  if (!list.length) { el.innerHTML = '<p style="color:var(--text2)">No communities found.</p>'; return; }
   el.innerHTML = list.map(c => communityCardHTML(c, true, 'communities')).join('');
 }
 
@@ -2779,7 +2779,7 @@ async function loadDashCommunities() {
     allDashCommunities = data.data || data || [];
     renderDashCommunities(allDashCommunities);
   } catch(e) {
-    document.getElementById('dash-communities-list').innerHTML = '<p style="color:var(--text2)">Tidak bisa load komunitas.</p>';
+    document.getElementById('dash-communities-list').innerHTML = '<p style="color:var(--text2)">Could not load communities.</p>';
   }
 }
 
@@ -2814,7 +2814,7 @@ async function loadDashboard() {
     const commData = await commRes.json();
     const communities = commData.data || commData || [];
     const dashComm = document.getElementById('dash-communities');
-    dashComm.innerHTML = communities.slice(0, 4).map(c => communityCardHTML(c, false, 'dashboard-browse')).join('') || '<p style="color:var(--text2)">Belum ada komunitas.</p>';
+    dashComm.innerHTML = communities.slice(0, 4).map(c => communityCardHTML(c, false, 'dashboard-browse')).join('') || '<p style="color:var(--text2)">No communities yet.</p>';
 
     if (donRes.ok) {
       const donData = await donRes.json();
@@ -2829,7 +2829,7 @@ async function loadDashboard() {
       document.getElementById('dash-vol-count').textContent = vols.length;
     }
   } catch(e) {
-    document.getElementById('dash-communities').innerHTML = '<p style="color:var(--text2)">Tidak bisa load data.</p>';
+    document.getElementById('dash-communities').innerHTML = '<p style="color:var(--text2)">Could not load data.</p>';
   }
 }
 
@@ -2845,8 +2845,8 @@ async function loadDonations() {
       document.getElementById('donations-list').innerHTML = `
         <div class="empty-state">
           <div class="empty-icon" style="color:var(--purple);opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
-          <p>Belum ada donasi yang dibuat.</p>
-          <button class="btn btn-purple btn-sm" onclick="showDashSection('browse')">Cari komunitas</button>
+          <p>No donations made yet.</p>
+          <button class="btn btn-purple btn-sm" onclick="showDashSection('browse')">Browse communities</button>
         </div>`;
       return;
     }
@@ -2856,10 +2856,10 @@ async function loadDonations() {
           <h4>${d.Community?.name || d.community_name || 'Komunitas'}</h4>
           <p>${new Date(d.createdAt || d.donation_date).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})}</p>
         </div>
-        <div class="hi-right">Rp ${(parseFloat(d.amount)||0).toLocaleString('id')}</div>
+        <div class="hi-right">Rp ${(parseFloat(d.amount)||0).toLocaleString('en')}</div>
       </div>`).join('')}</div>`;
   } catch(e) {
-    document.getElementById('donations-list').innerHTML = '<p style="color:var(--text2)">Tidak bisa load data donasi.</p>';
+    document.getElementById('donations-list').innerHTML = '<p style="color:var(--text2)">Could not load donation data.</p>';
   }
 }
 
@@ -2875,21 +2875,29 @@ async function loadVolunteerHistory() {
       document.getElementById('volunteer-list').innerHTML = `
         <div class="empty-state">
           <div class="empty-icon" style="color:var(--teal);opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-          <p>Belum ada aplikasi volunteer.</p>
-          <button class="btn btn-teal btn-sm" onclick="showDashSection('browse')">Cari komunitas</button>
+          <p>No volunteer applications yet.</p>
+          <button class="btn btn-teal btn-sm" onclick="showDashSection('browse')">Browse communities</button>
         </div>`;
       return;
     }
-    document.getElementById('volunteer-list').innerHTML = `<div class="history-list">${vols.map(v => `
-      <div class="history-item">
+    document.getElementById('volunteer-list').innerHTML = `<div class="history-list">${vols.map(v => {
+      const status = v.status || 'pending';
+      const statusLabel = status === 'approved' ? 'Approved' : status === 'rejected' ? 'Rejected' : 'Pending';
+      const date = new Date(v.createdAt || v.application_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+      return `<div class="history-item">
         <div class="hi-left">
-          <h4>${v.Community?.name || v.community_name || 'Komunitas'}</h4>
-          <p>${new Date(v.createdAt || v.application_date).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})}</p>
+          <h4>${v.Community?.name || v.community_name || 'Community'}</h4>
+          <p>${date}</p>
         </div>
-        <span class="status-badge status-${v.status || 'pending'}">${v.status || 'pending'}</span>
-      </div>`).join('')}</div>`;
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <span class="status-badge status-${status}">${statusLabel}</span>
+          ${status === 'approved' ? '<span style="font-size:0.72rem;color:var(--green);">✓ Active volunteer</span>' : ''}
+          ${status === 'rejected' ? '<span style="font-size:0.72rem;color:var(--red);">Not accepted</span>' : ''}
+        </div>
+      </div>`;
+    }).join('')}</div>`;
   } catch(e) {
-    document.getElementById('volunteer-list').innerHTML = '<p style="color:var(--text2)">Tidak bisa load data volunteer.</p>';
+    document.getElementById('volunteer-list').innerHTML = '<p style="color:var(--text2)">Could not load volunteer data.</p>';
   }
 }
 
@@ -3010,7 +3018,7 @@ async function saveProfile() {
 async function doLogin() {
   const email = document.getElementById('login-email').value;
   const pass = document.getElementById('login-pass').value;
-  if (!email || !pass) return showAlert('login-alert', 'Isi semua field ya!', 'err');
+  if (!email || !pass) return showAlert('login-alert', 'Please fill in all fields!', 'err');
   try {
     const res = await fetch(API + '/auth/login', {
       method: 'POST',
@@ -3018,7 +3026,7 @@ async function doLogin() {
       body: JSON.stringify({email, password: pass})
     });
     const data = await res.json();
-    if (!res.ok) return showAlert('login-alert', data.message || 'Login gagal', 'err');
+    if (!res.ok) return showAlert('login-alert', data.message || 'Login failed', 'err');
     token = data.token;
     user = data.data;
     localStorage.setItem('hl_token', token);
@@ -3043,7 +3051,7 @@ async function doLogin() {
     updateNav();
     showPage('dashboard');
   } catch(e) {
-    showAlert('login-alert', 'Tidak bisa konek ke server. Pastikan backend jalan!', 'err');
+    showAlert('login-alert', 'Cannot connect to server. Make sure the backend is running!', 'err');
   }
 }
 
@@ -3086,7 +3094,7 @@ function selectAmount(amount, btn) {
 async function submitDonate() {
   const amount = document.getElementById('donate-amount').value;
   const message = document.getElementById('donate-message').value;
-  if (!amount || amount <= 0) return showAlert('donate-alert', 'Masukkan nominal donasi!', 'err');
+  if (!amount || amount <= 0) return showAlert('donate-alert', 'Please enter a donation amount!', 'err');
   try {
     const res = await fetch(API + '/donations', {
       method: 'POST',
@@ -3094,11 +3102,11 @@ async function submitDonate() {
       body: JSON.stringify({amount: parseInt(amount), message, community_id: currentCommunityId})
     });
     const data = await res.json();
-    if (!res.ok) return showAlert('donate-alert', data.message || 'Donasi gagal', 'err');
-    showAlert('donate-alert', 'Donasi berhasil! Terima kasih sudah peduli.', 'ok');
+    if (!res.ok) return showAlert('donate-alert', data.message || 'Donation failed', 'err');
+    showAlert('donate-alert', 'Donation successful! Thank you for your support.', 'ok');
     setTimeout(() => closeModal('modal-donate'), 1800);
   } catch(e) {
-    showAlert('donate-alert', 'Donasi tercatat! Terima kasih.', 'ok');
+    showAlert('donate-alert', 'Donation recorded! Thank you.', 'ok');
     setTimeout(() => closeModal('modal-donate'), 1800);
   }
 }
@@ -3107,7 +3115,7 @@ async function submitVolunteer() {
   const skills = document.getElementById('vol-skills').value;
   const availability = document.getElementById('vol-availability').value;
   const motivation = document.getElementById('vol-motivation').value;
-  if (!skills || !motivation) return showAlert('volunteer-alert', 'Isi semua field ya!', 'err');
+  if (!skills || !motivation) return showAlert('volunteer-alert', 'Please fill in all fields!', 'err');
   try {
     const res = await fetch(API + '/volunteers/apply', {
       method: 'POST',
@@ -3115,11 +3123,11 @@ async function submitVolunteer() {
       body: JSON.stringify({skills, availability, motivation, community_id: currentCommunityId})
     });
     const data = await res.json();
-    if (!res.ok) return showAlert('volunteer-alert', data.message || 'Gagal kirim aplikasi', 'err');
-    showAlert('volunteer-alert', 'Aplikasi terkirim! Kami akan menghubungi kamu.', 'ok');
+    if (!res.ok) return showAlert('volunteer-alert', data.message || 'Failed to submit application', 'err');
+    showAlert('volunteer-alert', 'Application submitted! We will contact you.', 'ok');
     setTimeout(() => closeModal('modal-volunteer'), 1800);
   } catch(e) {
-    showAlert('volunteer-alert', 'Aplikasi terkirim! Terima kasih.', 'ok');
+    showAlert('volunteer-alert', 'Application submitted! Thank you.', 'ok');
     setTimeout(() => closeModal('modal-volunteer'), 1800);
   }
 }
@@ -3142,7 +3150,7 @@ function onRoleChange() {
   const nameLbl = document.getElementById('lbl-reg-name');
   const namePH = document.getElementById('reg-name');
   if (fields) fields.style.display = isCR ? 'block' : 'none';
-  if (btn) btn.textContent = isCR ? (currentLang === 'id' ? 'Kirim & Daftar Komunitas' : 'Submit & Register Community') : (currentLang === 'id' ? 'Buat akun' : 'Create account');
+  if (btn) btn.textContent = isCR ? (currentLang === 'id' ? 'Kirim & Daftar Komunitas' : 'Submit & Register Community') : (currentLang === 'id' ? 'Create account' : 'Create account');
   if (nameLbl) nameLbl.textContent = isCR ? (currentLang === 'id' ? 'Nama Perwakilan' : 'Representative Name') : (currentLang === 'id' ? 'Nama Lengkap' : 'Full Name');
   if (namePH) namePH.placeholder = isCR ? 'Your name as representative' : 'Your name';
 }
@@ -3950,7 +3958,7 @@ function loadRepCommProfile() {
   if (catWrap) catWrap.style.display = commProfile.category ? 'inline' : 'none';
   // Bio
   const bioEl = document.getElementById('comm-about-bio');
-  if (bioEl) bioEl.textContent = commProfile.description || 'No description yet.';
+  if (bioEl) bioEl.textContent = commProfile.description || 'No description yet. Click "Edit info" to add one.';
   // Contact
   const contactEl = document.getElementById('comm-contact-info');
   if (contactEl) {
@@ -3960,7 +3968,7 @@ function loadRepCommProfile() {
     if (phone) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.18 1.18 2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>' + phone + '</div>';
     if (commProfile.instagram) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg><a href="https://instagram.com/' + commProfile.instagram.replace('@','') + '" target="_blank">' + commProfile.instagram + '</a></div>';
     if (commProfile.website) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg><a href="' + commProfile.website + '" target="_blank">' + commProfile.website + '</a></div>';
-    if (!html) html = '<div style="color:var(--text2);font-size:0.85rem;">No contact info yet. Edit profile to add.</div>';
+    if (!html) html = '<div style="color:var(--text2);font-size:0.85rem;">No contact info yet. Edit your profile to add.</div>';
     contactEl.innerHTML = html;
   }
   // Stats
@@ -3998,7 +4006,7 @@ function toggleCommEdit() {
   }
 }
 
-function saveCommEdit() {
+async function saveCommEdit() {
   commProfile.description = document.getElementById('ce-bio').value.trim();
   commProfile.contactName = document.getElementById('ce-contact-name').value.trim();
   commProfile.contactPhone = document.getElementById('ce-contact-phone').value.trim();
@@ -4007,10 +4015,29 @@ function saveCommEdit() {
   // Save to localStorage
   const key = 'hl_comm_profile_' + (repCommunity.community_id || '');
   localStorage.setItem(key, JSON.stringify(commProfile));
-  // Update repCommunity description only
-  if (repCommunity) repCommunity.description = commProfile.description;
-  localStorage.setItem('hl_rep_community', JSON.stringify(repCommunity));
-  // Navbar keeps community name
+  // Save all fields to backend
+  try {
+    const res = await fetch(API + '/communities/my', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({
+        description: commProfile.description,
+        contact_phone: commProfile.contactPhone,
+        instagram: commProfile.instagram,
+        website: commProfile.website
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (repCommunity) {
+        repCommunity.description = commProfile.description;
+        repCommunity.contact_phone = commProfile.contactPhone;
+        repCommunity.instagram = commProfile.instagram;
+        repCommunity.website = commProfile.website;
+      }
+      localStorage.setItem('hl_rep_community', JSON.stringify(repCommunity));
+    }
+  } catch(e) { console.error('Could not save to backend:', e); }
   toggleCommEdit();
   loadRepCommProfile();
   const msg = document.getElementById('ce-msg');
@@ -4181,8 +4208,13 @@ function switchVDTab(tab) {
 }
 
 function loadRepVolDon() {
-  // Load volunteer applications from backend
-  fetch(API + '/volunteers/history/' + (user.user_id || user.id), {
+  // Load volunteer applications for this community from backend
+  const commId = repCommunity?.community_id;
+  if (!commId) {
+    document.getElementById('rep-vol-list-new').innerHTML = '<div class="empty-state"><p>No community found.</p></div>';
+    return;
+  }
+  fetch(API + '/volunteers/community/' + commId, {
     headers: { Authorization: 'Bearer ' + token }
   }).then(r => r.json()).then(d => {
     const apps = d.data || d || [];
@@ -4191,15 +4223,28 @@ function loadRepVolDon() {
     if (!apps.length) {
       el.innerHTML = '<div class="empty-state"><p>No volunteer applications yet.</p></div>'; return;
     }
-    el.innerHTML = apps.map(a =>
-      '<div class="rep-vol-card">'
-      + '<div class="rep-vol-top">'
-      + '<div class="rep-vol-avatar">' + (a.User?.name || 'V')[0].toUpperCase() + '</div>'
-      + '<div><div class="rep-vol-name">' + (a.User?.name || 'Volunteer') + '</div>'
-      + '<div class="rep-vol-meta">' + new Date(a.createdAt || a.application_date).toLocaleDateString('en-GB') + '</div></div>'
-      + '<span class="status-badge status-' + (a.status || 'pending') + '" style="margin-left:auto;">' + (a.status || 'pending') + '</span>'
-      + '</div></div>'
-    ).join('');
+    el.innerHTML = apps.map(a => {
+      const name = a.User?.name || 'Volunteer';
+      const email = a.User?.email || '';
+      const phone = a.User?.phone_number || '';
+      const status = a.status || 'pending';
+      const date = new Date(a.createdAt || a.application_date).toLocaleDateString('en-GB');
+      const actions = status === 'pending'
+        ? '<div style="display:flex;gap:0.5rem;margin-top:0.75rem;">'
+          + '<button class="btn btn-teal btn-sm" onclick="updateVolApp(' + a.application_id + ', \'approved\', this)">Approve</button>'
+          + '<button class="btn btn-sm" style="background:var(--red-light);color:var(--red);" onclick="updateVolApp(' + a.application_id + ', \'rejected\', this)">Reject</button>'
+          + '</div>'
+        : '';
+      return '<div class="rep-vol-card">'
+        + '<div class="rep-vol-top">'
+        + '<div class="rep-vol-avatar">' + name[0].toUpperCase() + '</div>'
+        + '<div><div class="rep-vol-name">' + name + '</div>'
+        + '<div class="rep-vol-meta">' + email + (phone ? ' · ' + phone : '') + ' · ' + date + '</div></div>'
+        + '<span class="status-badge status-' + status + '" style="margin-left:auto;">' + status + '</span>'
+        + '</div>'
+        + actions
+        + '</div>';
+    }).join('');
     // Update badge
     const pending = apps.filter(a => a.status === 'pending').length;
     const badge = document.getElementById('rep-vol-badge');
@@ -4217,6 +4262,19 @@ function loadRepVolDon() {
       + '<div class="history-item"><div class="hi-left"><h4>Rina Kusuma</h4><p>Yesterday</p></div><div class="hi-right">Rp 250,000</div></div>'
       + '</div>';
   }
+}
+
+async function updateVolApp(applicationId, status, btn) {
+  btn.disabled = true;
+  try {
+    const res = await fetch(API + '/volunteers/applications/' + applicationId + '/status', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ status })
+    });
+    if (res.ok) loadRepVolDon();
+    else btn.disabled = false;
+  } catch(e) { btn.disabled = false; }
 }
 
 function loadRepNotif() {
@@ -4500,20 +4558,25 @@ let previousPage = 'communities'; // track where user came from
 
 async function openCommunityProfile(communityId, fromPage) {
   previousPage = fromPage || 'communities';
-  // Find community from loaded data first
-  let comm = allCommunities.find(c => (c.community_id || c.id) === communityId)
-    || allDashCommunities.find(c => (c.community_id || c.id) === communityId);
-  // If not found locally, fetch from backend
-  if (!comm) {
-    try {
-      const res = await fetch(API + '/communities/' + communityId);
-      const data = await res.json();
-      comm = data.data || null;
-    } catch(e) { console.error('Could not fetch community:', e); }
+  // Always fetch fresh from backend to get latest description
+  try {
+    const res = await fetch(API + '/communities/' + communityId);
+    const data = await res.json();
+    if (data.data) {
+      currentProfileCommunity = data.data;
+      // Also update local arrays
+      const idx1 = allCommunities.findIndex(c => (c.community_id || c.id) === communityId);
+      if (idx1 >= 0) allCommunities[idx1] = data.data;
+      const idx2 = allDashCommunities.findIndex(c => (c.community_id || c.id) === communityId);
+      if (idx2 >= 0) allDashCommunities[idx2] = data.data;
+    }
+  } catch(e) {
+    // Fallback to local data
+    currentProfileCommunity = allCommunities.find(c => (c.community_id || c.id) === communityId)
+      || allDashCommunities.find(c => (c.community_id || c.id) === communityId);
   }
-  if (!comm) return;
-  currentProfileCommunity = comm;
-  renderCommunityProfile(comm);
+  if (!currentProfileCommunity) return;
+  renderCommunityProfile(currentProfileCommunity);
   showPage('community-profile');
 }
 
@@ -4547,13 +4610,22 @@ function renderCommunityProfile(comm) {
   const descEl = document.getElementById('cp-desc');
   if (descEl) descEl.textContent = comm.description || 'No description available.';
 
-  // Contact
+  // Contact — use backend data (contact_phone, instagram, website now stored in DB)
   const contactEl = document.getElementById('cp-contact');
   if (contactEl) {
     let html = '';
     const rep = comm.representative;
-    if (rep?.name) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' + rep.name + '</div>';
-    if (rep?.email) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:' + rep.email + '">' + rep.email + '</a></div>';
+    const contactPhone = comm.contact_phone || '';
+    const instagram = comm.instagram || '';
+    const website = comm.website || '';
+    const email = rep?.email || '';
+    const contactName = rep?.name || '';
+
+    if (contactName) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' + contactName + '</div>';
+    if (email) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:' + email + '">' + email + '</a></div>';
+    if (contactPhone) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.18 1.18 2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>' + contactPhone + '</div>';
+    if (instagram) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg><a href="https://instagram.com/' + instagram.replace('@','') + '" target="_blank">' + instagram + '</a></div>';
+    if (website) html += '<div class="comm-contact-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg><a href="' + website + '" target="_blank">' + website + '</a></div>';
     if (!html) html = '<div style="color:var(--text2);font-size:0.85rem;">No contact info available.</div>';
     contactEl.innerHTML = html;
   }

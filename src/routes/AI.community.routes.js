@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post('/register', authenticate, communityController.registerCommunity);
 router.get('/my', authenticate, communityController.getMyCommunity);
+router.put('/my', authenticate, communityController.updateCommunity);
 router.get('/', communityController.getAllCommunities);
 router.get('/:id', communityController.getCommunityDetail);
 
