@@ -4254,13 +4254,33 @@ function loadRepVolDon() {
     if (el) el.innerHTML = '<p style="color:var(--text2)">Could not load data.</p>';
   });
 
-  // Donations (dummy for now)
+  // Donations - fetch from backend
+  const commId2 = repCommunity?.community_id;
   const donEl = document.getElementById('rep-don-list-new');
-  if (donEl) {
-    donEl.innerHTML = '<div class="history-list">'
-      + '<div class="history-item"><div class="hi-left"><h4>Anonymous</h4><p>Today</p></div><div class="hi-right">Rp 500,000</div></div>'
-      + '<div class="history-item"><div class="hi-left"><h4>Rina Kusuma</h4><p>Yesterday</p></div><div class="hi-right">Rp 250,000</div></div>'
-      + '</div>';
+  if (donEl && commId2) {
+    fetch(API + '/donations/community/' + commId2, {
+      headers: { Authorization: 'Bearer ' + token }
+    }).then(r => r.json()).then(d => {
+      const dons = d.data || [];
+      if (!dons.length) {
+        donEl.innerHTML = '<div class="empty-state"><p>No donations received yet.</p></div>'; return;
+      }
+      let total = 0;
+      donEl.innerHTML = '<div class="history-list">' + dons.map(d => {
+        total += parseFloat(d.amount || 0);
+        const name = d.User?.name || 'Anonymous';
+        const date = new Date(d.createdAt || d.donation_date).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+        const amt = 'Rp ' + parseFloat(d.amount).toLocaleString('id');
+        return '<div class="history-item"><div class="hi-left"><h4>' + name + '</h4><p>' + date + '</p></div><div class="hi-right">' + amt + '</div></div>';
+      }).join('') + '</div>'
+      + '<div style="margin-top:1rem;padding:0.75rem;background:var(--bg2);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">'
+      + '<span style="font-size:0.85rem;color:var(--text2);">Total received</span>'
+      + '<strong>Rp ' + total.toLocaleString('id') + '</strong></div>';
+    }).catch(() => {
+      if (donEl) donEl.innerHTML = '<p style="color:var(--text2)">Could not load donations.</p>';
+    });
+  } else if (donEl) {
+    donEl.innerHTML = '<div class="empty-state"><p>No community found.</p></div>';
   }
 }
 
@@ -4605,6 +4625,19 @@ function renderCommunityProfile(comm) {
   if (cpD) cpD.textContent = 'Rp ' + totalDon.toLocaleString('id');
   document.getElementById('cp-volunteers').textContent = '-';
   document.getElementById('cp-events').textContent = '-';
+
+  // Fetch real volunteer count for this community
+  const commId = comm.community_id || comm.id;
+  if (commId) {
+    fetch(API + '/volunteers/community/' + commId, {
+      headers: token ? { Authorization: 'Bearer ' + token } : {}
+    }).then(r => r.json()).then(d => {
+      const apps = d.data || [];
+      const approved = apps.filter(a => a.status === 'approved').length;
+      const cpV = document.getElementById('cp-volunteers');
+      if (cpV) cpV.textContent = approved;
+    }).catch(() => {});
+  }
 
   // About
   const descEl = document.getElementById('cp-desc');

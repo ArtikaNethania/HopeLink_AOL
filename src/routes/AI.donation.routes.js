@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.post('/', authenticate, donationController.submitDonation);
 router.get('/user/:userId', donationController.getUserDonations);
+router.get('/community/:communityId', authenticate, donationController.getDonationsByCommunity);
 
 module.exports = router;
