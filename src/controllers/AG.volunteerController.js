@@ -6,7 +6,7 @@ const Community = require('../models/AI.Community');
 const volunteerController = {
   async applyAsVolunteer(req, res, next) {
     try {
-      const { community_id } = req.body;
+      const { community_id, skills, availability, motivation } = req.body;
       const { userId } = req.user;
 
       if (!community_id) {
@@ -29,6 +29,9 @@ const volunteerController = {
       const application = await VolunteerApplication.create({
         user_id: userId,
         community_id,
+        skills,
+        availability,
+        motivation,
         status: 'pending'
       });
 

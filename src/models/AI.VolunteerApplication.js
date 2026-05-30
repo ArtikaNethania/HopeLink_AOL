@@ -29,6 +29,15 @@ const VolunteerApplication = sequelize.define('VolunteerApplication', {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   },
+  skills: {
+  type: DataTypes.STRING(255)
+  },
+  availability: {
+    type: DataTypes.STRING(50)
+  },
+  motivation: {
+    type: DataTypes.TEXT
+  },
   status: {
     type: DataTypes.ENUM('pending', 'approved', 'rejected', 'withdrawn'),
     defaultValue: 'pending'

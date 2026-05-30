@@ -4238,6 +4238,9 @@ function loadRepVolDon() {
           + '<button class="btn btn-sm" style="background:var(--red-light);color:var(--red);" onclick="updateVolApp(' + a.application_id + ', \'rejected\', this)">Reject</button>'
           + '</div>'
         : '';
+      const skills = a.skills || '';
+      const availability = a.availability || '';
+      const motivation = a.motivation || '';
       return '<div class="rep-vol-card">'
         + '<div class="rep-vol-top">'
         + '<div class="rep-vol-avatar">' + name[0].toUpperCase() + '</div>'
@@ -4245,6 +4248,8 @@ function loadRepVolDon() {
         + '<div class="rep-vol-meta">' + email + (phone ? ' · ' + phone : '') + ' · ' + date + '</div></div>'
         + '<span class="status-badge status-' + status + '" style="margin-left:auto;">' + status + '</span>'
         + '</div>'
+        + (skills || availability ? '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;"><span style="font-size:0.75rem;background:var(--teal-light);color:var(--teal);padding:2px 8px;border-radius:20px;">'+skills+'</span>' + (availability ? '<span style="font-size:0.75rem;background:var(--purple-light);color:var(--purple);padding:2px 8px;border-radius:20px;">'+availability+'</span>' : '') + '</div>' : '')
+        + (motivation ? '<div class="rep-vol-motivation">"' + motivation + '"</div>' : '')
         + actions
         + '</div>';
     }).join('');
