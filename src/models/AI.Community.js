@@ -23,6 +23,9 @@ const Community = sequelize.define('Community', {
   description: {
     type: DataTypes.TEXT
   },
+  category: {
+  type: DataTypes.STRING(50)
+  },
   contact_phone: {
     type: DataTypes.STRING(20)
   },

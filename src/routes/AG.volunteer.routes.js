@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/apply', authenticate, volunteerController.applyAsVolunteer);
 router.put('/applications/:applicationId', authenticate, volunteerController.approveApplication);
 router.get('/history/:userId', volunteerController.getVolunteerHistory);
-router.get('/community/:communityId', authenticate, volunteerController.getVolunteersByCommunity);
+router.get('/community/:communityId', volunteerController.getVolunteersByCommunity);
 router.patch('/applications/:applicationId/status', authenticate, volunteerController.updateVolunteerStatus);
 
 module.exports = router;

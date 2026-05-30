@@ -3979,11 +3979,14 @@ function loadRepCommProfile() {
   if (csD) csD.textContent = 'Rp ' + totalDon.toLocaleString('id');
   if (csE) csE.textContent = repEvents.length;
   // Fetch volunteer count
-  fetch(API + '/volunteers/history/' + (user.user_id || user.id), {
-    headers: { Authorization: 'Bearer ' + token }
-  }).then(r => r.json()).then(d => {
-    if (csV) csV.textContent = (d.data || d || []).length;
-  }).catch(() => {});
+  // Fetch approved volunteer count for this community
+  if (repCommunity?.community_id) {
+    fetch(API + '/volunteers/community/' + repCommunity.community_id)
+      .then(r => r.json()).then(d => {
+        const approved = (d.data || []).filter(a => a.status === 'approved').length;
+        if (csV) csV.textContent = approved;
+      }).catch(() => {});
+  }
   // Render posts
   renderPosts();
 }
@@ -4629,9 +4632,8 @@ function renderCommunityProfile(comm) {
   // Fetch real volunteer count for this community
   const commId = comm.community_id || comm.id;
   if (commId) {
-    fetch(API + '/volunteers/community/' + commId, {
-      headers: token ? { Authorization: 'Bearer ' + token } : {}
-    }).then(r => r.json()).then(d => {
+    fetch(API + '/volunteers/community/' + commId)
+    .then(r => r.json()).then(d => {
       const apps = d.data || [];
       const approved = apps.filter(a => a.status === 'approved').length;
       const cpV = document.getElementById('cp-volunteers');
