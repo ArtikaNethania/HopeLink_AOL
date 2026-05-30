@@ -9,5 +9,6 @@ router.get('/communities/pending', authenticate, authorize('admin'), adminContro
 router.get('/communities', authenticate, authorize('admin'), adminController.getAllCommunities);
 router.patch('/communities/:id/verify', authenticate, authorize('admin'), adminController.verifyCommunity);
 router.get('/users', authenticate, authorize('admin'), adminController.getAllUsers);
+router.delete('/users/:id', authenticate, authorize('admin'), adminController.deleteUser);
 
 module.exports = router;
