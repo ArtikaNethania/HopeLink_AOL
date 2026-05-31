@@ -1,17 +1,21 @@
 const Community = require('../models/AI.Community');
 const User = require('../models/AI.User');
+const Notification = require('../models/AI.Notification');
+
+async function createNotif(userId, type, title, body) {
+  try {
+    await Notification.create({ user_id: userId, type, title, body });
+  } catch (e) {
+    console.error('Notif error:', e.message);
+  }
+}
 
 const adminController = {
-
   async getPendingCommunities(req, res, next) {
     try {
       const communities = await Community.findAll({
         where: { verification_status: 'pending' },
-        include: [{
-          model: User,
-          as: 'representative',
-          attributes: ['user_id', 'name', 'email', 'phone_number']
-        }]
+        include: [{ model: User, as: 'representative', attributes: ['user_id', 'name', 'email', 'phone_number'] }]
       });
       res.json({ success: true, data: communities });
     } catch (error) {
@@ -22,11 +26,7 @@ const adminController = {
   async getAllCommunities(req, res, next) {
     try {
       const communities = await Community.findAll({
-        include: [{
-          model: User,
-          as: 'representative',
-          attributes: ['user_id', 'name', 'email', 'phone_number']
-        }]
+        include: [{ model: User, as: 'representative', attributes: ['user_id', 'name', 'email', 'phone_number'] }]
       });
       res.json({ success: true, data: communities });
     } catch (error) {
@@ -51,6 +51,25 @@ const adminController = {
       community.verification_status = status;
       await community.save();
 
+      // Notify community rep
+      if (community.community_rep_id) {
+        if (status === 'approved') {
+          await createNotif(
+            community.community_rep_id,
+            'approved',
+            'Komunitas Diverifikasi',
+            `Komunitas "${community.name}" kamu telah disetujui oleh admin. Selamat!`
+          );
+        } else {
+          await createNotif(
+            community.community_rep_id,
+            'rejected',
+            'Komunitas Ditolak',
+            `Pendaftaran komunitas "${community.name}" kamu tidak disetujui oleh admin.`
+          );
+        }
+      }
+
       res.json({ success: true, message: `Community ${status} successfully`, data: community });
     } catch (error) {
       next(error);
@@ -59,9 +78,7 @@ const adminController = {
 
   async getAllUsers(req, res, next) {
     try {
-      const users = await User.findAll({
-        attributes: { exclude: ['password'] }
-      });
+      const users = await User.findAll({ attributes: { exclude: ['password'] } });
       res.json({ success: true, data: users });
     } catch (error) {
       next(error);
@@ -84,7 +101,6 @@ const adminController = {
       next(error);
     }
   }
-
 };
 
 module.exports = adminController;

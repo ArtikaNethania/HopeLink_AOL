@@ -9,6 +9,7 @@ const communityRoutes = require('./routes/AI.community.routes');
 const donationRoutes = require('./routes/AI.donation.routes');
 const volunteerRoutes = require('./routes/AG.volunteer.routes');
 const adminRoutes = require('./routes/CA.admin.routes');
+const notificationRoutes = require('./routes/AI.notification.routes');
 
 const app = express();
 
@@ -17,12 +18,13 @@ app.use(cors({ origin: '*', credentials: true }));
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api/admin', adminRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/communities', communityRoutes);
 app.use('/api/donations', donationRoutes);
 app.use('/api/volunteers', volunteerRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
@@ -31,10 +33,7 @@ app.get('/health', (req, res) => {
 app.use(errorHandler);
 
 app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route tidak ditemukan'
-  });
+  res.status(404).json({ success: false, message: 'Route tidak ditemukan' });
 });
 
 module.exports = app;

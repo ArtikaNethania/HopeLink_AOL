@@ -2,6 +2,15 @@ const VolunteerApplication = require('../models/AI.VolunteerApplication');
 const Service = require('../models/AI.Service');
 const User = require('../models/AI.User');
 const Community = require('../models/AI.Community');
+const Notification = require('../models/AI.Notification');
+
+async function createNotif(userId, type, title, body) {
+  try {
+    await Notification.create({ user_id: userId, type, title, body });
+  } catch (e) {
+    console.error('Notif error:', e.message);
+  }
+}
 
 const volunteerController = {
   async applyAsVolunteer(req, res, next) {
@@ -34,6 +43,16 @@ const volunteerController = {
         motivation,
         status: 'pending'
       });
+
+      // Notify community rep
+      if (community.community_rep_id) {
+        await createNotif(
+          community.community_rep_id,
+          'volunteer',
+          'Pendaftar Volunteer Baru',
+          `Ada volunteer baru yang mendaftar ke komunitas ${community.name}`
+        );
+      }
 
       res.status(201).json({ success: true, message: 'Aplikasi volunteer berhasil disubmit', data: application });
     } catch (error) {
@@ -71,12 +90,10 @@ const volunteerController = {
   async getVolunteerHistory(req, res, next) {
     try {
       const { userId } = req.params;
-
       const applications = await VolunteerApplication.findAll({
         where: { user_id: userId },
         include: [{ model: Community, attributes: ['community_id', 'name', 'location'] }]
       });
-
       res.json({ success: true, data: applications });
     } catch (error) {
       next(error);
@@ -86,13 +103,11 @@ const volunteerController = {
   async getVolunteersByCommunity(req, res, next) {
     try {
       const { communityId } = req.params;
-
       const applications = await VolunteerApplication.findAll({
         where: { community_id: communityId },
         include: [{ model: User, attributes: ['user_id', 'name', 'email', 'phone_number'] }],
         order: [['createdAt', 'DESC']]
       });
-
       res.json({ success: true, data: applications });
     } catch (error) {
       next(error);
@@ -111,6 +126,23 @@ const volunteerController = {
 
       application.status = status;
       await application.save();
+
+      // Notify the applicant
+      if (status === 'approved') {
+        await createNotif(
+          application.user_id,
+          'approved',
+          'Aplikasi Volunteer Diterima',
+          'Selamat! Aplikasi volunteer kamu telah disetujui oleh community rep.'
+        );
+      } else if (status === 'rejected') {
+        await createNotif(
+          application.user_id,
+          'rejected',
+          'Aplikasi Volunteer Ditolak',
+          'Maaf, aplikasi volunteer kamu tidak diterima kali ini.'
+        );
+      }
 
       res.json({ success: true, message: 'Status diupdate', data: application });
     } catch (error) {

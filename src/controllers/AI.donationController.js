@@ -1,6 +1,15 @@
 const Donation = require('../models/AI.Donation');
 const Community = require('../models/AI.Community');
 const User = require('../models/AI.User');
+const Notification = require('../models/AI.Notification');
+
+async function createNotif(userId, type, title, body) {
+  try {
+    await Notification.create({ user_id: userId, type, title, body });
+  } catch (e) {
+    console.error('Notif error:', e.message);
+  }
+}
 
 const donationController = {
   async submitDonation(req, res, next) {
@@ -26,6 +35,16 @@ const donationController = {
 
       community.total_donations = parseFloat(community.total_donations) + parseFloat(amount);
       await community.save();
+
+      // Notify community rep
+      if (community.community_rep_id) {
+        await createNotif(
+          community.community_rep_id,
+          'donation',
+          'Donasi Baru Masuk',
+          `Komunitas kamu menerima donasi sebesar Rp${parseFloat(amount).toLocaleString('id-ID')}`
+        );
+      }
 
       res.status(201).json({ success: true, message: 'Donation submitted successfully', data: donation });
     } catch (error) {

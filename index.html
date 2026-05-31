@@ -3324,76 +3324,68 @@ function resetAvatar() {
 }
 
 // -- NOTIFICATIONS --
-const DUMMY_NOTIFS = {
-  donor: [
-    { id:1, type:'volunteer', title:'Volunteer application approved', body:'Your application to Panti Harapan Bangsa has been approved. Welcome to the team!', time:'2 hours ago', unread:true },
-    { id:2, type:'donation', title:'Donation received', body:'Your donation of Rp 50,000 to Shelter Pelangi was successfully processed.', time:'1 day ago', unread:true },
-    { id:3, type:'volunteer', title:'New volunteer opportunity', body:'Rumah Lansia Sejahtera is looking for volunteers this weekend. Check it out!', time:'3 days ago', unread:false },
-    { id:4, type:'system', title:'Welcome to HopeLink', body:'Thank you for joining HopeLink. Start exploring communities near you.', time:'1 week ago', unread:false },
-  ],
-  community_rep: [
-    { id:1, type:'volunteer', title:'New volunteer application', body:'Someone has applied to volunteer at your community. Review their application now.', time:'30 minutes ago', unread:true },
-    { id:2, type:'donation', title:'New donation received', body:'Your community received a donation of Rp 100,000. Thank you to your supporters!', time:'3 hours ago', unread:true },
-    { id:3, type:'approved', title:'Community verified', body:'Congratulations! Your community has been verified and is now visible on HopeLink.', time:'2 days ago', unread:false },
-    { id:4, type:'volunteer', title:'Volunteer application pending', body:'You have 2 pending volunteer applications waiting for your review.', time:'4 days ago', unread:false },
-  ]
-};
+function formatTimeAgo(dateStr) {
+  const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+  if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
+  return new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+}
 
-let readNotifs = JSON.parse(localStorage.getItem('hl_read_notifs') || '[]');
-
-function loadNotifications() {
-  const role = user?.role === 'community_rep' ? 'community_rep' : 'donor';
-  const notifs = DUMMY_NOTIFS[role] || [];
-  const unreadCount = notifs.filter(n => n.unread && !readNotifs.includes(n.id)).length;
-
-  // Update badge
-  const badge = document.getElementById('notif-badge');
-  if (badge) { badge.textContent = unreadCount; badge.style.display = unreadCount > 0 ? 'inline' : 'none'; }
-
-  // Render list
+async function loadNotifications() {
   const listEl = document.getElementById('notifications-list');
   if (!listEl) return;
-  if (!notifs.length) {
-    listEl.innerHTML = '<div class="empty-state"><p>No notifications yet.</p></div>'; return;
+  listEl.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p>Loading...</p></div>';
+  try {
+    const res = await fetch(API + '/notifications', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const notifs = data.data || [];
+    const unreadCount = notifs.filter(n => !n.is_read).length;
+    const badge = document.getElementById('notif-badge');
+    if (badge) { badge.textContent = unreadCount; badge.style.display = unreadCount > 0 ? 'inline' : 'none'; }
+    if (!notifs.length) { listEl.innerHTML = '<div class="empty-state"><p>No notifications yet.</p></div>'; return; }
+    const iconMap = {
+      donation: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
+      volunteer: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+      approved: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="20 6 9 17 4 12"/></svg>',
+      rejected: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+      system: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    };
+    listEl.innerHTML = notifs.map(n => {
+      const isUnread = !n.is_read;
+      return '<div class="notif-item' + (isUnread ? ' unread' : '') + '" onclick="markRead(' + n.notification_id + ')">'
+        + '<div class="notif-item-icon notif-icon-' + n.type + '">' + (iconMap[n.type] || iconMap.system) + '</div>'
+        + '<div class="notif-item-content">'
+        + '<div class="notif-item-title">' + n.title + '</div>'
+        + '<div class="notif-item-body">' + n.body + '</div>'
+        + '<div class="notif-item-time">' + formatTimeAgo(n.createdAt) + '</div>'
+        + '</div>'
+        + (isUnread ? '<div class="notif-unread-dot"></div>' : '')
+        + '</div>';
+    }).join('');
+  } catch(e) {
+    listEl.innerHTML = '<div class="empty-state"><p>Could not load notifications.</p></div>';
   }
-
-  const iconMap = {
-    donation: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
-    volunteer: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
-    system: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
-    approved: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="20 6 9 17 4 12"/></svg>',
-    rejected: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-  };
-
-  listEl.innerHTML = notifs.map(n => {
-    const isUnread = n.unread && !readNotifs.includes(n.id);
-    const cls = 'notif-item' + (isUnread ? ' unread' : '');
-    return '<div class="' + cls + '" onclick="markRead(' + n.id + ')">'
-      + '<div class="notif-item-icon notif-icon-' + n.type + '">' + (iconMap[n.type] || iconMap.system) + '</div>'
-      + '<div class="notif-item-content">'
-      + '<div class="notif-item-title">' + n.title + '</div>'
-      + '<div class="notif-item-body">' + n.body + '</div>'
-      + '<div class="notif-item-time">' + n.time + '</div>'
-      + '</div>'
-      + (isUnread ? '<div class="notif-unread-dot"></div>' : '')
-      + '</div>';
-  }).join('');
 }
 
-function markRead(id) {
-  if (!readNotifs.includes(id)) {
-    readNotifs.push(id);
-    localStorage.setItem('hl_read_notifs', JSON.stringify(readNotifs));
+async function markRead(id) {
+  try {
+    await fetch(API + '/notifications/' + id + '/read', {
+      method: 'PATCH', headers: { Authorization: 'Bearer ' + token }
+    });
     loadNotifications();
-  }
+    if (user?.role === 'community_rep') loadRepNotif();
+  } catch(e) {}
 }
 
-function markAllRead() {
-  const role = user?.role === 'community_rep' ? 'community_rep' : 'donor';
-  const notifs = DUMMY_NOTIFS[role] || [];
-  notifs.forEach(n => { if (!readNotifs.includes(n.id)) readNotifs.push(n.id); });
-  localStorage.setItem('hl_read_notifs', JSON.stringify(readNotifs));
-  loadNotifications();
+async function markAllRead() {
+  try {
+    await fetch(API + '/notifications/read-all', {
+      method: 'PATCH', headers: { Authorization: 'Bearer ' + token }
+    });
+    loadNotifications();
+  } catch(e) {}
 }
 
 
@@ -4305,26 +4297,40 @@ async function updateVolApp(applicationId, status, btn) {
   } catch(e) { btn.disabled = false; }
 }
 
-function loadRepNotif() {
+async function loadRepNotif() {
   const el = document.getElementById('rep-notif-list');
   if (!el) return;
-  const notifs = [
-    { type: 'volunteer', title: 'New volunteer application', body: 'Someone applied to volunteer at your community.', time: '30 min ago', unread: true },
-    { type: 'donation', title: 'New donation received', body: 'Your community received Rp 100,000.', time: '3 hours ago', unread: true },
-    { type: 'approved', title: 'Community verified', body: 'Your community has been verified!', time: '2 days ago', unread: false },
-  ];
-  el.innerHTML = notifs.map(n => {
-    const cls = 'notif-item' + (n.unread ? ' unread' : '');
-    return '<div class="' + cls + '">'
-      + '<div class="notif-item-icon notif-icon-' + n.type + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>'
-      + '<div class="notif-item-content"><div class="notif-item-title">' + n.title + '</div><div class="notif-item-body">' + n.body + '</div><div class="notif-item-time">' + n.time + '</div></div>'
-      + (n.unread ? '<div class="notif-unread-dot"></div>' : '')
-      + '</div>';
-  }).join('');
-  // Update notif badge
-  const unread = notifs.filter(n => n.unread).length;
-  const badge = document.getElementById('rep-notif-badge');
-  if (badge) { badge.textContent = unread; badge.style.display = unread > 0 ? 'inline' : 'none'; }
+  el.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p>Loading...</p></div>';
+  try {
+    const res = await fetch(API + '/notifications', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const notifs = data.data || [];
+    const unread = notifs.filter(n => !n.is_read).length;
+    const badge = document.getElementById('rep-notif-badge');
+    if (badge) { badge.textContent = unread; badge.style.display = unread > 0 ? 'inline' : 'none'; }
+    if (!notifs.length) { el.innerHTML = '<div class="empty-state"><p>No notifications yet.</p></div>'; return; }
+    const iconMap = {
+      donation: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
+      volunteer: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+      approved: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="20 6 9 17 4 12"/></svg>',
+      rejected: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+      system: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    };
+    el.innerHTML = notifs.map(n => {
+      const isUnread = !n.is_read;
+      return '<div class="notif-item' + (isUnread ? ' unread' : '') + '" onclick="markRead(' + n.notification_id + ')">'
+        + '<div class="notif-item-icon notif-icon-' + n.type + '">' + (iconMap[n.type] || iconMap.system) + '</div>'
+        + '<div class="notif-item-content">'
+        + '<div class="notif-item-title">' + n.title + '</div>'
+        + '<div class="notif-item-body">' + n.body + '</div>'
+        + '<div class="notif-item-time">' + formatTimeAgo(n.createdAt) + '</div>'
+        + '</div>'
+        + (isUnread ? '<div class="notif-unread-dot"></div>' : '')
+        + '</div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><p>Could not load notifications.</p></div>';
+  }
 }
 
 function toggleRepProfileEdit() {
