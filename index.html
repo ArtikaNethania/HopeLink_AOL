@@ -2809,11 +2809,11 @@ function showAlert(id, msg, type) {
 // COMMUNITY CARD HTML
 function getCategoryIcon(category) {
   const icons = {
-    orphanage: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
-    shelter: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>',
-    elderly: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
-    disability: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><circle cx="12" cy="4" r="2"/><path d="M10 8h4l2 6h-2l-1 6H11l-1-6H8z"/><path d="M8 20a4 4 0 008 0"/></svg>',
-    other: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+    orphanage: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M12 13v8"/><path d="M9 17h6"/></svg>',
+    shelter: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/><path d="M12 3v4"/></svg>',
+    elderly: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v5l-3 4"/><path d="M12 13l3 4"/><path d="M9 21c0-1.5 1-3 3-3s3 1.5 3 3"/><path d="M7 15h2"/><path d="M15 15h2"/></svg>',
+    disability: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><circle cx="12" cy="4" r="1.5"/><path d="M9 9h6l-1 5H10z"/><path d="M9 21a5 5 0 010-8"/><path d="M15 21a5 5 0 000-8"/><path d="M15 14l2 3"/></svg>',
+    other: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'
   };
   return icons[category] || icons.other;
 }
@@ -2839,6 +2839,7 @@ function communityCardHTML(c, showDesc = false, fromPage = 'communities') {
         ${loc}
       </div>
       ${showDesc && desc ? `<div class="desc" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${desc}</div>` : ''}
+      <div style="flex:1;"></div>
       <span class="badge">Verified</span>
       <div class="card-btns" style="flex-direction:column;gap:6px;">
         <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="openCommunityProfile(${id}, '${fromPage}')">View</button>
