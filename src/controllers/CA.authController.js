@@ -5,95 +5,64 @@ const authController = {
   async register(req, res, next) {
     try {
       const { name, email, password, phone_number, role } = req.body;
-
       if (!name || !email || !password) {
-        return res.status(400).json({
-          success: false,
-          message: 'Nama, email, dan password harus diisi'
-        });
+        return res.status(400).json({ success: false, message: 'Name, email, and password are required' });
       }
-
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-        return res.status(409).json({
-          success: false,
-          message: 'Email sudah terdaftar'
-        });
+        return res.status(409).json({ success: false, message: 'Email is already registered' });
       }
-
-      const user = await User.create({
-        name,
-        email,
-        password,
-        phone_number,
-        role: role || 'donor'
-      });
-
+      const user = await User.create({ name, email, password, phone_number, role: role || 'donor' });
       const token = generateToken(user.user_id, user.role);
-
       res.status(201).json({
         success: true,
-        message: 'Registrasi berhasil',
+        message: 'Registration successful',
         data: {
           user_id: user.user_id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role,
+          phone_number: user.phone_number,
+          profile_picture: user.profile_picture || null,
+          createdAt: user.createdAt
         },
         token
       });
-    } catch (error) {
-      next(error);
-    }
+    } catch (error) { next(error); }
   },
 
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
-
       if (!email || !password) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email dan password harus diisi'
-        });
+        return res.status(400).json({ success: false, message: 'Email and password are required' });
       }
-
       const user = await User.findOne({ where: { email } });
-
       if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: 'Email atau password salah'
-        });
+        return res.status(401).json({ success: false, message: 'Invalid email or password' });
       }
-
       const isPasswordValid = await user.comparePassword(password);
-
       if (!isPasswordValid) {
-        return res.status(401).json({
-          success: false,
-          message: 'Email atau password salah'
-        });
+        return res.status(401).json({ success: false, message: 'Invalid email or password' });
       }
-
       const token = generateToken(user.user_id, user.role);
       const refreshToken = generateRefreshToken(user.user_id);
-
       res.json({
         success: true,
-        message: 'Login berhasil',
+        message: 'Login successful',
         data: {
           user_id: user.user_id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role,
+          phone_number: user.phone_number,
+          profile_picture: user.profile_picture || null,
+          createdAt: user.createdAt
         },
         token,
         refreshToken
       });
-    } catch (error) {
-      next(error);
-    }
+    } catch (error) { next(error); }
   },
 
   async getProfile(req, res, next) {
@@ -101,71 +70,48 @@ const authController = {
       const user = await User.findByPk(req.user.userId, {
         attributes: { exclude: ['password'] }
       });
-
       if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'User tidak ditemukan'
-        });
+        return res.status(404).json({ success: false, message: 'User not found' });
       }
-
-      res.json({
-        success: true,
-        data: user
-      });
-    } catch (error) {
-      next(error);
-    }
+      res.json({ success: true, data: user });
+    } catch (error) { next(error); }
   },
 
   async updateProfile(req, res, next) {
     try {
-      const { name, email, phone_number } = req.body;
-
+      const { name, email, phone_number, profile_picture } = req.body;
       if (!name || !email) {
-        return res.status(400).json({
-          success: false,
-          message: 'Name and email are required'
-        });
+        return res.status(400).json({ success: false, message: 'Name and email are required' });
       }
-
       const user = await User.findByPk(req.user.userId);
       if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
+        return res.status(404).json({ success: false, message: 'User not found' });
       }
-
       if (email !== user.email) {
         const existing = await User.findOne({ where: { email } });
         if (existing) {
-          return res.status(409).json({
-            success: false,
-            message: 'Email already in use'
-          });
+          return res.status(409).json({ success: false, message: 'Email is already in use' });
         }
       }
-
       user.name = name;
       user.email = email;
-      if (phone_number) user.phone_number = phone_number;
+      if (phone_number !== undefined) user.phone_number = phone_number;
+      if (profile_picture !== undefined) user.profile_picture = profile_picture;
       await user.save();
-
       res.json({
         success: true,
-        message: 'Profile updated',
+        message: 'Profile updated successfully',
         data: {
           user_id: user.user_id,
           name: user.name,
           email: user.email,
           phone_number: user.phone_number,
-          role: user.role
+          role: user.role,
+          profile_picture: user.profile_picture || null,
+          createdAt: user.createdAt
         }
       });
-    } catch (error) {
-      next(error);
-    }
+    } catch (error) { next(error); }
   }
 };
 

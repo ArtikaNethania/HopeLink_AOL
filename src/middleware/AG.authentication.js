@@ -3,11 +3,11 @@ const { verifyToken } = require('../config/CA.jwt.config');
 const authenticate = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'Token tidak ditemukan'
+        message: 'Authentication token not found'
       });
     }
 
@@ -17,7 +17,7 @@ const authenticate = (req, res, next) => {
     if (!decoded) {
       return res.status(401).json({
         success: false,
-        message: 'Token tidak valid'
+        message: 'Invalid or expired token'
       });
     }
 
@@ -26,7 +26,7 @@ const authenticate = (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Autentikasi gagal'
+      message: 'Authentication failed'
     });
   }
 };
@@ -36,14 +36,14 @@ const authorize = (...allowedRoles) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'User tidak terautentikasi'
+        message: 'User is not authenticated'
       });
     }
 
     if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Anda tidak memiliki akses'
+        message: 'You do not have permission to access this resource'
       });
     }
 
@@ -52,4 +52,3 @@ const authorize = (...allowedRoles) => {
 };
 
 module.exports = { authenticate, authorize };
-

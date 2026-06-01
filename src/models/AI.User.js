@@ -31,6 +31,10 @@ const User = sequelize.define('User', {
   is_active: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  profile_picture: {
+    type: DataTypes.TEXT, // base64 string
+    allowNull: true
   }
 }, {
   tableName: 'users',
@@ -46,5 +50,8 @@ User.prototype.comparePassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
 
-module.exports = User;
+User.associate = (models) => {
+  User.hasMany(models.Post, { foreignKey: 'user_id' });
+};
 
+module.exports = User;

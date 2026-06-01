@@ -7,7 +7,7 @@ async function createNotif(userId, type, title, body) {
   try {
     await Notification.create({ user_id: userId, type, title, body });
   } catch (e) {
-    console.error('Notif error:', e.message);
+    console.error('Notification error:', e.message);
   }
 }
 
@@ -36,17 +36,21 @@ const donationController = {
       community.total_donations = parseFloat(community.total_donations) + parseFloat(amount);
       await community.save();
 
-      // Notify community rep
+      // Notify community representative
       if (community.community_rep_id) {
         await createNotif(
           community.community_rep_id,
           'donation',
-          'Donasi Baru Masuk',
-          `Komunitas kamu menerima donasi sebesar Rp${parseFloat(amount).toLocaleString('id-ID')}`
+          'New Donation Received',
+          `Your community received a donation of Rp${parseFloat(amount).toLocaleString('id-ID')}`
         );
       }
 
-      res.status(201).json({ success: true, message: 'Donation submitted successfully', data: donation });
+      res.status(201).json({
+        success: true,
+        message: 'Donation submitted successfully',
+        data: donation
+      });
     } catch (error) {
       next(error);
     }

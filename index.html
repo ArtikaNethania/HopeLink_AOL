@@ -247,7 +247,10 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
+    .community-card .card-btns { margin-top: auto; }
     .community-card::before {
       content: '';
       position: absolute;
@@ -830,7 +833,7 @@
     .comm-post-meta .name { font-weight: 600; font-size: 0.9rem; color: var(--text); }
     .comm-post-meta .time { font-size: 0.75rem; color: var(--text2); margin-top: 1px; }
     .comm-post-body { font-size: 0.88rem; color: var(--text); line-height: 1.65; margin-bottom: 0.75rem; white-space: pre-wrap; }
-    .comm-post-img { width: 100%; height: 260px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 0.75rem; display: block; }
+    .comm-post-img { max-width: 100%; height: auto; border-radius: var(--radius-sm); margin-bottom: 0.75rem; display: block; }
     .comm-post-footer { display: flex; gap: 1rem; padding-top: 0.65rem; border-top: 1px solid var(--border); }
     .comm-post-action-btn { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; color: var(--text2); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0.25rem 0.5rem; border-radius: 6px; transition: 0.15s; }
     .comm-post-action-btn:hover { background: var(--bg2); color: var(--text); }
@@ -1210,9 +1213,13 @@
     <button class="btn btn-primary btn-sm" onclick="showPage('register')" id="nav-join-btn">Join now</button>
   </div>
   <div class="nav-user" id="nav-logged" style="display:none;">
-
-    <div class="nav-avatar" id="nav-avatar" style="overflow:hidden;" onclick="showDashSection('profile')" title="Profile">A</div>
-    <span class="nav-username" id="nav-username" style="cursor:pointer;" onclick="showDashSection('profile')">User</span>
+    <div style="position:relative;cursor:pointer;" id="nav-notif-btn" onclick="handleNavNotif()" title="Notifications">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="1.75" style="display:block;transition:stroke 0.2s;" onmouseover="this.style.stroke='var(--purple)'" onmouseout="this.style.stroke='var(--text2)'"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span id="nav-notif-badge" style="display:none;position:absolute;top:-5px;right:-6px;background:var(--red);color:white;font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center;line-height:14px;">0</span>
+    </div>
+    <div class="nav-avatar" id="nav-avatar" style="overflow:hidden;" onclick="handleNavAvatar()" title="Profile">A</div>
+    <span class="nav-username" id="nav-username" style="cursor:pointer;" onclick="handleNavAvatar()">User</span>
+    <button class="nav-logout" onclick="doLogout()" id="nav-logout-btn" style="display:none;">Logout</button>
   </div>
 </nav>
 
@@ -1395,7 +1402,7 @@
 
     <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:1.25rem;width:100%;">
       <button class="btn btn-purple" style="width:100%;justify-content:center;" onclick="closeModal('modal-pending')" id="pm-close-btn">Continue browsing</button>
-      <button class="pending-cancel-btn" style="width:100%;justify-content:center;" onclick="confirmCancelRequest()" id="pm-cancel-btn">
+      <button class="btn btn-outline" style="width:100%;justify-content:center;color:var(--red);border-color:rgba(192,57,43,0.3);" onclick="confirmCancelRequest()" id="pm-cancel-btn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         <span id="pm-cancel-label">Cancel request</span>
       </button>
@@ -1467,6 +1474,10 @@
           <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
           Users
         </div>
+        <div class="sidebar-item" id="sb-admin-ratings" onclick="showAdminSection('admin-ratings')">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Ratings
+        </div>
         <div class="sidebar-item" id="sb-admin-profile" onclick="showAdminSection('admin-profile')">
           <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Profile
@@ -1489,11 +1500,7 @@
           <span class="notif-badge" id="rep-vol-badge" style="display:none;margin-left:auto;">0</span>
         </div>
         <div class="sidebar-label">Account</div>
-        <div class="sidebar-item" id="sb-rep-notif" onclick="showRepSection('rep-notif')">
-          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-          Notifications
-          <span class="notif-badge" id="rep-notif-badge" style="display:none;margin-left:auto;">0</span>
-        </div>
+
         <div class="sidebar-item" id="sb-rep-profile" onclick="showRepSection('rep-profile')">
           <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Profile
@@ -1588,7 +1595,7 @@
             </div>
             <button class="profile-edit-trigger" id="profile-edit-btn" onclick="enterEditMode()" style="margin-top:1.1rem;width:100%;justify-content:center;">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              <span id="profile-edit-btn-label">Edit name &amp; email</span>
+              <span id="profile-edit-btn-label">Edit Profile</span>
             </button>
           </div>
           <div class="profile-info-card">
@@ -1816,6 +1823,34 @@
         </div>
       </div>
 
+      <!-- ADMIN: RATINGS -->
+      <div class="dash-section" id="dash-admin-ratings">
+        <div class="admin-page-header">
+          <div>
+            <h2 class="admin-page-title">Ratings & Reviews</h2>
+            <p class="admin-page-sub">All ratings submitted by donors and communities</p>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Activity</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Review</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="admin-ratings-list">
+              <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text2);">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- ADMIN: PROFILE -->
       <div class="dash-section" id="dash-admin-profile">
         <div class="admin-page-header">
@@ -1908,7 +1943,7 @@
           <div class="comm-stat-div"></div>
           <div class="comm-stat"><div class="comm-stat-val" id="cs-volunteers">0</div><div class="comm-stat-lbl">Volunteers</div></div>
           <div class="comm-stat-div"></div>
-          <div class="comm-stat"><div class="comm-stat-val" id="cs-events">0</div><div class="comm-stat-lbl">Events</div></div>
+          <div class="comm-stat"><div class="comm-stat-val" id="cs-events">0</div><div class="comm-stat-lbl">Activities</div></div>
         </div>
 
         <!-- Edit panel (hidden by default) -->
@@ -1934,7 +1969,7 @@
         <div class="comm-about-grid" id="comm-about-grid">
           <div class="comm-about-card">
             <div class="comm-about-title">About</div>
-            <div class="comm-about-bio" id="comm-about-bio">-</div>
+            <div class="comm-about-bio" id="comm-about-bio" style="white-space:pre-wrap;">-</div>
           </div>
           <div class="comm-about-card">
             <div class="comm-about-title">Contact</div>
@@ -1977,7 +2012,7 @@
         <div class="comm-about-card" style="margin-bottom:1.5rem;">
           <div class="comm-about-title">Create New Activity</div>
           <div class="comm-edit-grid" style="margin-top:1rem;">
-            <div class="form-group"><label>Event Title</label><input type="text" id="ev-title" placeholder="e.g. Weekend Teaching Day" /></div>
+            <div class="form-group"><label>Activity Title</label><input type="text" id="ev-title" placeholder="e.g. Weekend Teaching Day" /></div>
             <div class="form-group"><label>Date</label><input type="date" id="ev-date" /></div>
             <div class="form-group"><label>Volunteers Needed</label><input type="number" id="ev-slots" placeholder="e.g. 10" min="1" /></div>
             <div class="form-group"><label>Type</label>
@@ -1999,10 +2034,10 @@
           </div>
           <div id="ev-photo-preview" style="margin-top:0.5rem;"></div>
           <div id="ev-msg" class="profile-field-msg" style="margin-top:0.5rem;"></div>
-          <button class="btn btn-purple" style="margin-top:0.75rem;" onclick="createEvent()">Create Event</button>
+          <button class="btn btn-purple" style="margin-top:0.75rem;" onclick="createActivity()">Create Activity</button>
         </div>
         <!-- Event list -->
-        <div class="comm-about-title" style="margin-bottom:1rem;">Your Events</div>
+        <div class="comm-about-title" style="margin-bottom:1rem;">Your Activities</div>
         <div id="events-list"></div>
       </div>
 
@@ -2255,11 +2290,21 @@
     <div class="comm-about-grid">
       <div class="comm-about-card">
         <div class="comm-about-title">About</div>
-        <div class="comm-about-bio" id="cp-desc">-</div>
+        <div class="comm-about-bio" id="cp-desc" style="white-space:pre-wrap;">-</div>
       </div>
       <div class="comm-about-card">
         <div class="comm-about-title">Contact</div>
         <div id="cp-contact"></div>
+      </div>
+    </div>
+
+    <!-- Activities section -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+        <div class="comm-about-title">Activities</div>
+      </div>
+      <div id="cp-activities">
+        <div class="loading-wrap"><div class="spinner"></div></div>
       </div>
     </div>
 
@@ -2315,7 +2360,7 @@ const T = {
     lblCommName: 'Community Name', lblCommCategory: 'Category', lblCommLocation: 'Location / City', lblCommDesc: 'Description',
     lblRegPhone: 'Phone Number', lblPhone: 'Phone Number', lblRepName: 'Representative Name', lblFullName2: 'Full Name',
     lblCommPhoto: 'Community Photo', lblUploadHint: 'Click to upload — JPG, PNG up to 5MB',
-    editNameEmail: 'Edit name & email',
+    editNameEmail: 'Edit Profile',
     saveChanges: 'Save changes', cancel: 'Cancel',
     lblFullName: 'Full Name', lblEmail: 'Email', lblRole: 'Role', lblMemberSince: 'Member since',
     profileSaveOk: 'Profile updated successfully.', profileErrName: 'Name cannot be empty.', profileErrEmail: 'Email cannot be empty.',
@@ -2359,7 +2404,7 @@ const T = {
     lblCommName: 'Nama Komunitas', lblCommCategory: 'Kategori', lblCommLocation: 'Lokasi / Kota', lblCommDesc: 'Deskripsi',
     lblRegPhone: 'Nomor Telepon', lblPhone: 'Nomor Telepon', lblRepName: 'Nama Perwakilan', lblFullName2: 'Nama Lengkap',
     lblCommPhoto: 'Foto Komunitas', lblUploadHint: 'Klik untuk upload — JPG, PNG maks 5MB',
-    editNameEmail: 'Edit nama & email',
+    editNameEmail: 'Edit Profil',
     saveChanges: 'Simpan perubahan', cancel: 'Cancel',
     lblFullName: 'Nama Lengkap', lblEmail: 'Email', lblRole: 'Peran', lblMemberSince: 'Bergabung sejak',
     profileSaveOk: 'Profil berhasil diperbarui.', profileErrName: 'Nama tidak boleh kosong.', profileErrEmail: 'Email tidak boleh kosong.',
@@ -2553,38 +2598,66 @@ function handleAvatarUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     const dataUrl = e.target.result;
-    localStorage.setItem('hl_avatar', dataUrl);
+    // Apply immediately for instant feedback
     applyAvatar(dataUrl);
+    // Save to backend
+    try {
+      const res = await fetch(API + '/auth/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          phone_number: user.phone_number || '',
+          profile_picture: dataUrl
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        user.profile_picture = data.data.profile_picture;
+        localStorage.setItem('hl_user', JSON.stringify(user));
+      }
+    } catch(e) { console.error('Could not save avatar:', e); }
   };
   reader.readAsDataURL(file);
 }
 
 function applyAvatar(dataUrl) {
+  const initials = (user ? (user.name || 'U') : 'U')[0].toUpperCase();
   // Profile page avatar
   const palEl = document.getElementById('profile-avatar-large');
   if (palEl) {
-    if (dataUrl) {
-      palEl.innerHTML = '<img src="' + dataUrl + '" alt="avatar" />';
-    } else {
-      palEl.innerHTML = (user ? (user.name || 'U') : 'U')[0].toUpperCase();
-    }
+    palEl.innerHTML = dataUrl
+      ? '<img src="' + dataUrl + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />'
+      : initials;
   }
   // Navbar avatar
   const navAv = document.getElementById('nav-avatar');
   if (navAv) {
-    if (dataUrl) {
-      navAv.innerHTML = '<img src="' + dataUrl + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />';
-    } else {
-      navAv.textContent = (user ? (user.name || 'U') : 'U')[0].toUpperCase();
-    }
+    navAv.innerHTML = dataUrl
+      ? '<img src="' + dataUrl + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />'
+      : initials;
+  }
+  // Rep profile avatar
+  const repAv = document.getElementById('rep-profile-avatar');
+  if (repAv) {
+    repAv.innerHTML = dataUrl
+      ? '<img src="' + dataUrl + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />'
+      : initials;
   }
 }
 
+function avatarKey() {
+  return 'hl_avatar_' + (user?.user_id || user?.id || 'guest');
+}
+
 function loadAvatar() {
-  const saved = localStorage.getItem('hl_avatar');
-  applyAvatar(saved || '');
+  // Prefer backend profile_picture, then commProfile avatar (for rep), then user-specific localStorage
+  const storedComm = JSON.parse(localStorage.getItem('hl_comm_profile_' + (repCommunity?.community_id || '')) || '{}');
+  const pic = user?.profile_picture || storedComm.avatarPhoto || commProfile?.avatarPhoto || localStorage.getItem(avatarKey()) || '';
+  applyAvatar(pic);
 }
 
 // NAV SCROLL EFFECT
@@ -2593,13 +2666,50 @@ window.addEventListener('scroll', () => {
 });
 
 // UPDATE NAV STATE
+function handleNavNotif() {
+  const isPendingRep = user?.role === 'community_rep' && repCommunity?.verification_status === 'pending';
+  if (isPendingRep) return; // disabled for pending rep
+  if (user?.role === 'community_rep') showRepSection('rep-notif');
+  else showDashSection('notifications');
+}
+
+function handleNavAvatar() {
+  const isPendingRep = user?.role === 'community_rep' && repCommunity?.verification_status === 'pending';
+  if (isPendingRep) {
+    openPendingModal(); // show pending modal instead
+    return;
+  }
+  if (user?.role === 'community_rep') showRepSection('rep-profile');
+  else showDashSection('profile');
+}
+
 function updateNav() {
   if (token && user) {
-    document.getElementById('nav-guest').style.display = 'none';
-    document.getElementById('nav-guest-actions').style.display = 'none';
-    document.getElementById('nav-logged').style.display = 'flex';
-    document.getElementById('nav-username').textContent = user.name || 'User';
-    loadAvatar();
+    // Always read fresh from localStorage
+    if (!repCommunity || !repCommunity.verification_status) {
+      const stored = localStorage.getItem('hl_rep_community');
+      if (stored) repCommunity = JSON.parse(stored);
+    }
+    const isPendingRep = user.role === 'community_rep' && repCommunity?.verification_status === 'pending';
+    if (isPendingRep) {
+      // Pending rep: show guest nav + logout button only
+      document.getElementById('nav-guest').style.display = 'flex';
+      document.getElementById('nav-logged').style.display = 'none';
+      const guestActions = document.getElementById('nav-guest-actions');
+      guestActions.style.display = 'flex';
+      guestActions.innerHTML = '<button class="btn btn-outline btn-sm" onclick="doLogout()" style="color:var(--red);border-color:rgba(192,57,43,0.3);">Logout</button>';
+    } else {
+      // Restore guest actions to original if it was overwritten
+      const guestActions = document.getElementById('nav-guest-actions');
+      if (guestActions && !guestActions.querySelector('#nav-login-btn')) {
+        guestActions.innerHTML = '<button class="btn btn-outline btn-sm" onclick="showPage(&quot;login&quot;)" id="nav-login-btn">Login</button><button class="btn btn-primary btn-sm" onclick="showPage(&quot;register&quot;)" id="nav-join-btn">Join now</button>';
+      }
+      document.getElementById('nav-guest').style.display = 'none';
+      document.getElementById('nav-guest-actions').style.display = 'none';
+      document.getElementById('nav-logged').style.display = 'flex';
+      document.getElementById('nav-username').textContent = user.name || 'User';
+      loadAvatar();
+    }
   } else {
     document.getElementById('nav-guest').style.display = 'flex';
     document.getElementById('nav-guest-actions').style.display = 'flex';
@@ -2684,7 +2794,7 @@ function showDashSection(section) {
   if (section === 'donations') loadDonations();
   if (section === 'volunteer') loadVolunteerHistory();
   if (section === 'profile') loadProfile();
-  if (section === 'notifications') loadNotifications();
+  if (section === 'notifications') { loadNotifications(); loadNotifBadge(); }
 }
 
 function updateDashName() {
@@ -2697,28 +2807,44 @@ function showAlert(id, msg, type) {
 }
 
 // COMMUNITY CARD HTML
+function getCategoryIcon(category) {
+  const icons = {
+    orphanage: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+    shelter: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>',
+    elderly: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
+    disability: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><circle cx="12" cy="4" r="2"/><path d="M10 8h4l2 6h-2l-1 6H11l-1-6H8z"/><path d="M8 20a4 4 0 008 0"/></svg>',
+    other: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+  };
+  return icons[category] || icons.other;
+}
+
 function communityCardHTML(c, showDesc = false, fromPage = 'communities') {
   const id = c.community_id || c.id;
   const name = c.name || c.community_name || 'Community';
   const loc = c.location || c.city || '-';
   const desc = c.description || '';
+  const category = c.category || 'other';
+  const isActiveVol = myApprovedCommunityIds.includes(id);
+  const volBtnHtml = isActiveVol
+    ? '<button class="btn btn-sm" style="flex:1;justify-content:center;background:var(--green-light);color:var(--green);border:1px solid rgba(26,158,117,0.3);cursor:default;">✓ Active Volunteer</button>'
+    : '<button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="openVolunteer(' + id + ', \'' + name.replace(/'/g, "\\'") + '\')">Volunteer</button>';
   return `
     <div class="community-card">
       <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+        ${getCategoryIcon(category)}
       </div>
       <h3>${name}</h3>
       <div class="loc">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
         ${loc}
       </div>
-      ${showDesc && desc ? `<div class="desc">${desc}</div>` : ''}
+      ${showDesc && desc ? `<div class="desc" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${desc}</div>` : ''}
       <span class="badge">Verified</span>
       <div class="card-btns" style="flex-direction:column;gap:6px;">
         <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="openCommunityProfile(${id}, '${fromPage}')">View</button>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-purple" style="flex:1;justify-content:center;" onclick="openDonate(${id}, '${name.replace(/'/g,"\\'")}')">Donate</button>
-          <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="openVolunteer(${id}, '${name.replace(/'/g,"\\'")}')">Volunteer</button>
+          <button class="btn btn-purple" style="flex:1;justify-content:center;" onclick="openDonate(${id}, '${name.replace(/'/g,"\'")}')">Donate</button>
+          ${volBtnHtml}
         </div>
       </div>
     </div>`;
@@ -2805,6 +2931,15 @@ function filterDashCommunities() {
 async function loadDashboard() {
   if (!user) return;
   const uid = user.user_id || user.id;
+  // Pre-load approved communities and registered events for button states
+  try {
+    const volRes2 = await fetch(API + '/volunteers/history/' + uid, { headers: { Authorization: 'Bearer ' + token } });
+    if (volRes2.ok) {
+      const volData2 = await volRes2.json();
+      myApprovedCommunityIds = (volData2.data || []).filter(v => v.status === 'approved').map(v => v.community_id);
+    }
+  } catch(e) {}
+  await loadRegisteredEventIds();
   try {
     const [commRes, donRes, volRes] = await Promise.all([
       fetch(API + '/communities'),
@@ -2864,6 +2999,8 @@ async function loadDonations() {
 }
 
 // LOAD VOLUNTEER HISTORY
+let myApprovedCommunityIds = []; // track approved communities globally
+
 async function loadVolunteerHistory() {
   if (!user) return;
   document.getElementById('volunteer-list').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p>Loading...</p></div>';
@@ -2871,6 +3008,10 @@ async function loadVolunteerHistory() {
     const res = await fetch(API + '/volunteers/history/' + (user.user_id || user.id), { headers: { Authorization: 'Bearer ' + token } });
     const data = await res.json();
     const vols = data.data || data || [];
+
+    // Update global approved community IDs for use in community cards
+    myApprovedCommunityIds = vols.filter(v => v.status === 'approved').map(v => v.community_id);
+
     if (!vols.length) {
       document.getElementById('volunteer-list').innerHTML = `
         <div class="empty-state">
@@ -2880,24 +3021,204 @@ async function loadVolunteerHistory() {
         </div>`;
       return;
     }
-    document.getElementById('volunteer-list').innerHTML = `<div class="history-list">${vols.map(v => {
-      const status = v.status || 'pending';
-      const statusLabel = status === 'approved' ? 'Approved' : status === 'rejected' ? 'Rejected' : 'Pending';
-      const date = new Date(v.createdAt || v.application_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
-      return `<div class="history-item">
-        <div class="hi-left">
-          <h4>${v.Community?.name || v.community_name || 'Community'}</h4>
-          <p>${date}</p>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-          <span class="status-badge status-${status}">${statusLabel}</span>
-          ${status === 'approved' ? '<span style="font-size:0.72rem;color:var(--green);">✓ Active volunteer</span>' : ''}
-          ${status === 'rejected' ? '<span style="font-size:0.72rem;color:var(--red);">Not accepted</span>' : ''}
-        </div>
-      </div>`;
-    }).join('')}</div>`;
+
+    const approved = vols.filter(v => v.status === 'approved');
+    const others = vols.filter(v => v.status !== 'approved');
+
+    let html = '';
+
+    // ── ACTIVE COMMUNITIES SECTION ──
+    if (approved.length) {
+      html += '<div style="margin-bottom:2rem;">'
+        + '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:1rem;">Active Communities</div>'
+        + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;">'
+        + approved.map(v => {
+            const comm = v.Community || {};
+            const commId = v.community_id;
+            const commName = comm.name || 'Community';
+            const commLoc = comm.location || '';
+            const joinDate = new Date(v.createdAt || v.application_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+            return '<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;">'
+              + '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--teal));"></div>'
+              + '<div style="display:flex;align-items:flex-start;gap:0.85rem;margin-bottom:0.85rem;">'
+              + '<div style="width:42px;height:42px;border-radius:10px;background:var(--purple-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+              + '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.75"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>'
+              + '</div>'
+              + '<div style="flex:1;min-width:0;">'
+              + '<div style="font-weight:600;font-size:0.95rem;color:var(--text);margin-bottom:2px;">' + commName + '</div>'
+              + (commLoc ? '<div style="font-size:0.78rem;color:var(--text2);">' + commLoc + '</div>' : '')
+              + '</div>'
+              + '<span class="status-badge status-approved">Active</span>'
+              + '</div>'
+              + '<div style="font-size:0.75rem;color:var(--green);margin-bottom:0.85rem;">Volunteer since ' + joinDate + '</div>'
+              + '<button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;" onclick="openCommunityProfile(' + commId + ', \'dashboard-browse\')">View Community</button>'
+              + '</div>';
+          }).join('')
+        + '</div></div>';
+    }
+
+    // ── MY REGISTERED ACTIVITIES ──
+    html += '<div id="vol-registered-activities" style="margin-bottom:2rem;">'
+      + '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:1rem;">My Registered Activities</div>'
+      + '<div id="vol-reg-act-list"><div class="loading-wrap"><div class="spinner"></div></div></div>'
+      + '</div>';
+
+    // ── APPLICATIONS LIST ──
+    if (others.length) {
+      html += '<div>'
+        + '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:1rem;">Applications</div>'
+        + '<div class="history-list">'
+        + others.map(v => {
+            const status = v.status || 'pending';
+            const statusLabel = status === 'rejected' ? 'Rejected' : 'Pending Review';
+            const date = new Date(v.createdAt || v.application_date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+            return '<div class="history-item">'
+              + '<div class="hi-left"><h4>' + (v.Community?.name || 'Community') + '</h4><p>Applied ' + date + '</p></div>'
+              + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">'
+              + '<span class="status-badge status-' + status + '">' + statusLabel + '</span>'
+              + (status === 'rejected' ? '<span style="font-size:0.72rem;color:var(--red);">Not accepted</span>' : '')
+              + '</div></div>';
+          }).join('')
+        + '</div></div>';
+    }
+
+    document.getElementById('volunteer-list').innerHTML = html;
+    // Load registered activities
+    loadMyRegisteredActivities();
   } catch(e) {
     document.getElementById('volunteer-list').innerHTML = '<p style="color:var(--text2)">Could not load volunteer data.</p>';
+  }
+}
+
+async function showVolunteerEvents(communityId, communityName) {
+  const section = document.getElementById('vol-events-section');
+  const nameEl = document.getElementById('vol-events-comm-name');
+  const listEl = document.getElementById('vol-events-list');
+  if (!section || !listEl) return;
+
+  section.style.display = 'block';
+  if (nameEl) nameEl.textContent = communityName;
+  listEl.innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
+
+  try {
+    const res = await fetch(API + '/events/community/' + communityId);
+    const data = await res.json();
+    const events = data.data || [];
+
+    if (!events.length) {
+      listEl.innerHTML = '<div class="empty-state"><p>No activities from this community yet.</p></div>'; return;
+    }
+
+    listEl.innerHTML = events.map(ev => {
+      const isPast = ev.event_date && new Date(ev.event_date) < new Date();
+      const typeColors = { volunteer: 'var(--teal)', donation_drive: 'var(--purple)', community_event: 'var(--yellow-dark)' };
+      return `<div class="event-card" style="margin-bottom:0.75rem;">
+        <div class="event-card-left">
+          <div class="event-card-title">${ev.title}</div>
+          <div class="event-card-meta">📅 ${ev.event_date || '-'} · <span style="color:${typeColors[ev.type]||'var(--text2)'};font-weight:600;">${(ev.type||'').replace(/_/g,' ')}</span></div>
+          ${ev.description ? `<div class="event-card-desc">${ev.description}</div>` : ''}
+        </div>
+        <div class="event-card-right">
+          ${ev.slots ? `<div class="event-slots"><strong>${ev.slots}</strong><br>slots</div>` : ''}
+          <span class="status-badge ${isPast ? 'status-rejected' : 'status-approved'}">${isPast ? 'Ended' : 'Active'}</span>
+          ${!isPast ? `<button class="btn btn-teal btn-sm" onclick="registerToEvent(${ev.event_id}, '${(ev.title||'').replace(/'/g,"\'")}')">Register</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    listEl.innerHTML = '<p style="color:var(--text2)">Could not load events.</p>';
+  }
+}
+
+async function loadMyRegisteredActivities() {
+  const el = document.getElementById('vol-reg-act-list');
+  if (!el) return;
+  try {
+    const res = await fetch(API + '/events/my/registrations', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    const regs = data.data || [];
+    if (!regs.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:1.5rem 2rem;"><p>You have not registered for any activities yet.</p></div>';
+      return;
+    }
+    // Check which events already rated
+    const ratedChecks = await Promise.all(regs.map(r =>
+      fetch(API + '/ratings/event/' + (r.Event?.event_id || r.event_id) + '/check', {
+        headers: { Authorization: 'Bearer ' + token }
+      }).then(res => res.json()).catch(() => ({ rated: false }))
+    ));
+
+    el.innerHTML = regs.map((r, i) => {
+      const ev = r.Event || {};
+      const dateFormatted = ev.event_date
+        ? new Date(ev.event_date + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})
+        : '-';
+      const isPast = ev.event_date && new Date(ev.event_date) < new Date();
+      const typeLabel = (ev.type||'').replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase());
+      const alreadyRated = ratedChecks[i]?.rated;
+      const rateBtn = isPast
+        ? (alreadyRated
+            ? '<span style="font-size:0.72rem;color:var(--green);">Rated</span>'
+            : '<button class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:0.3rem 0.75rem;" onclick="openRatingModal(' + (ev.event_id||r.event_id) + ', &quot;community&quot;, ' + ev.community_id + ', &quot;' + (ev.title||'Activity').replace(/'/g, "\\'") + '&quot;)">Rate Community</button>')
+        : '<span style="font-size:0.72rem;color:var(--green);">Registered</span>';
+      return '<div class="history-item">'
+        + '<div class="hi-left">'
+        + '<h4>' + (ev.title || 'Activity') + '</h4>'
+        + '<p>' + typeLabel + ' &bull; ' + dateFormatted + '</p>'
+        + '</div>'
+        + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">'
+        + '<span class="status-badge ' + (isPast ? 'status-rejected' : 'status-approved') + '">' + (isPast ? 'Ended' : 'Active') + '</span>'
+        + rateBtn
+        + '</div></div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--text2);padding:1rem;">Could not load activities.</p>';
+  }
+}
+
+// Track registered event IDs
+let myRegisteredEventIds = [];
+
+async function loadRegisteredEventIds() {
+  try {
+    const res = await fetch(API + '/events/my/registrations', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    myRegisteredEventIds = (data.data || []).map(r => r.Event?.event_id || r.event_id);
+  } catch(e) {}
+}
+
+async function registerToEvent(eventId, eventTitle) {
+  if (!token) { showPage('login'); return; }
+  try {
+    const res = await fetch(API + '/events/' + eventId + '/register', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (res.ok) {
+      // Update button state
+      myRegisteredEventIds.push(eventId);
+      const btn = document.querySelector('[onclick*="registerToEvent(' + eventId + ',"]');
+      if (btn) {
+        btn.textContent = 'Registered';
+        btn.disabled = true;
+        btn.style.background = 'var(--green-light)';
+        btn.style.color = 'var(--green)';
+        btn.style.border = '1px solid rgba(26,158,117,0.3)';
+        btn.style.cursor = 'default';
+      }
+      // Refresh registered activities if on volunteer page
+      const volRegList = document.getElementById('vol-reg-act-list');
+      if (volRegList) loadMyRegisteredActivities();
+    } else {
+      alert(data.message || 'Could not register for this event.');
+    }
+  } catch(e) {
+    alert('Could not connect to server.');
   }
 }
 
@@ -2926,7 +3247,8 @@ async function loadProfile() {
   const roleLabel = roleMap[user.role] || user.role || '-';
   document.getElementById('profile-role').textContent = roleLabel;
   document.getElementById('profile-role-badge').textContent = roleLabel;
-  document.getElementById('profile-joined').textContent = 'HopeLink Member';
+  const joinedDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : 'HopeLink Member';
+  document.getElementById('profile-joined').textContent = joinedDate;
   applyRoleBadgeColor();
 
   // Mini stats
@@ -3049,6 +3371,7 @@ async function doLogin() {
     }
 
     updateNav();
+    loadNotifBadge();
     showPage('dashboard');
   } catch(e) {
     showAlert('login-alert', 'Cannot connect to server. Make sure the backend is running!', 'err');
@@ -3074,6 +3397,10 @@ function openDonate(id, name) {
 
 function openVolunteer(id, name) {
   if (!token) { showPage('login'); return; }
+  if (myApprovedCommunityIds.includes(id)) {
+    alert('You are already an active volunteer of ' + name + '! Check My Volunteer to see available events.');
+    return;
+  }
   currentCommunityId = id;
   currentCommunityName = name;
   document.getElementById('volunteer-target').textContent = name;
@@ -3237,13 +3564,13 @@ function handleCommPhotoUpload(event) {
 }
 
 function showPendingLockdown(community) {
-  // Instead of full page lockdown, show modal + status bar
+  repCommunity = community;
   openPendingModal();
-  // Show status bar on home
   const bar = document.getElementById('pending-status-bar');
   if (bar) bar.style.display = 'block';
-  // Go to home page so they can browse
   showPage('home');
+  // Update nav after repCommunity is set
+  updateNav();
 }
 
 function openPendingModal() {
@@ -3285,9 +3612,14 @@ function doLogout() {
 function confirmLogout() {
   localStorage.removeItem('hl_token');
   localStorage.removeItem('hl_user');
-  localStorage.removeItem('hl_avatar');
+  localStorage.removeItem(avatarKey());
   localStorage.removeItem('hl_rep_community');
   token = null; user = null; repCommunity = null;
+  // Restore original nav guest actions
+  const guestActions = document.getElementById('nav-guest-actions');
+  if (guestActions) {
+    guestActions.innerHTML = '<button class="btn btn-outline btn-sm" onclick="showPage(\'login\')" id="nav-login-btn">Login</button><button class="btn btn-primary btn-sm" onclick="showPage(\'register\')" id="nav-join-btn">Join now</button>';
+  }
   allAdminComms = []; allAdminUsers = [];
   currentCommFilter = 'all'; currentUserFilter = 'all';
   // Reset all sidebar sections visibility
@@ -3318,8 +3650,24 @@ function doDeleteAccount() {
 }
 
 // -- RESET AVATAR --
-function resetAvatar() {
-  localStorage.removeItem('hl_avatar');
+async function resetAvatar() {
+  try {
+    const res = await fetch(API + '/auth/profile', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({
+        name: user.name,
+        email: user.email,
+        phone_number: user.phone_number || '',
+        profile_picture: null
+      })
+    });
+    if (res.ok) {
+      user.profile_picture = null;
+      localStorage.setItem('hl_user', JSON.stringify(user));
+    }
+  } catch(e) {}
+  localStorage.removeItem(avatarKey());
   applyAvatar('');
 }
 
@@ -3331,6 +3679,21 @@ function formatTimeAgo(dateStr) {
   if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
   if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
   return new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+}
+
+async function loadNotifBadge() {
+  if (!token || !user) return;
+  try {
+    const res = await fetch(API + '/notifications', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const notifs = data.data || [];
+    const unread = notifs.filter(n => !n.is_read).length;
+    const badge = document.getElementById('nav-notif-badge');
+    if (badge) {
+      badge.textContent = unread;
+      badge.style.display = unread > 0 ? 'inline' : 'none';
+    }
+  } catch(e) {}
 }
 
 async function loadNotifications() {
@@ -3375,6 +3738,7 @@ async function markRead(id) {
       method: 'PATCH', headers: { Authorization: 'Bearer ' + token }
     });
     loadNotifications();
+    loadNotifBadge();
     if (user?.role === 'community_rep') loadRepNotif();
   } catch(e) {}
 }
@@ -3385,6 +3749,7 @@ async function markAllRead() {
       method: 'PATCH', headers: { Authorization: 'Bearer ' + token }
     });
     loadNotifications();
+    loadNotifBadge();
   } catch(e) {}
 }
 
@@ -3638,6 +4003,7 @@ function showAdminSection(section) {
   if (section === 'admin-overview') loadAdminOverview();
   if (section === 'admin-communities') loadAdminCommunities();
   if (section === 'admin-users') loadAdminUsers();
+  if (section === 'admin-ratings') loadAdminRatings();
   if (section === 'admin-profile') loadAdminProfile();
 }
 
@@ -3650,7 +4016,6 @@ async function loadAdminDashboard() {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
-  // Hide sidebar labels and divider
   document.querySelectorAll('.sidebar-label').forEach(el => el.style.display = 'none');
   document.querySelectorAll('.sidebar .divider').forEach(el => el.style.display = 'none');
   showAdminSection('admin-overview');
@@ -3883,6 +4248,41 @@ function adminDeleteUser(id, name) {
   });
 }
 
+async function loadAdminRatings() {
+  const tbody = document.getElementById('admin-ratings-list');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text2);">Loading...</td></tr>';
+  try {
+    const res = await fetch(API + '/ratings/all', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const ratings = data.data || [];
+    if (!ratings.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text2);">No ratings yet.</td></tr>';
+      return;
+    }
+    const stars = (n) => '★'.repeat(n) + '☆'.repeat(5-n);
+    tbody.innerHTML = ratings.map(r => {
+      const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '-';
+      const typeLabel = r.rater_type === 'donor' ? 'Donor → Community' : 'Community → Volunteer';
+      const typeBadge = r.rater_type === 'donor'
+        ? '<span style="font-size:0.7rem;background:var(--teal-light);color:var(--teal);padding:2px 8px;border-radius:20px;font-weight:600;">Donor</span>'
+        : '<span style="font-size:0.7rem;background:var(--purple-light);color:var(--purple);padding:2px 8px;border-radius:20px;font-weight:600;">Community</span>';
+      const scoreColor = r.score >= 4 ? 'var(--green)' : r.score === 3 ? 'var(--yellow-dark)' : 'var(--red)';
+      return '<tr>'
+        + '<td><div class="td-name">' + (r.rater?.name || '-') + '</div><div class="td-sub">' + (r.rater?.role || '') + '</div></td>'
+        + '<td><div class="td-name">' + (r.ratee?.name || '-') + '</div></td>'
+        + '<td>' + (r.Event?.title || '-') + '</td>'
+        + '<td>' + typeBadge + '</td>'
+        + '<td><span style="font-size:1rem;color:' + scoreColor + ';">' + stars(r.score) + '</span> <strong>' + r.score + '/5</strong></td>'
+        + '<td style="max-width:200px;font-size:0.82rem;color:var(--text2);">' + (r.review || '-') + '</td>'
+        + '<td style="font-size:0.78rem;color:var(--text2);">' + date + '</td>'
+        + '</tr>';
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text2);">Could not load ratings.</td></tr>';
+  }
+}
+
 function loadAdminProfile() {
   if (!user) return;
   const nameEl = document.getElementById('admin-profile-name');
@@ -3901,6 +4301,8 @@ let commProfile = {}; // extended profile stored locally
 let repPosts = [];
 let repEvents = [];
 let postLikes = {};
+let cpPosts = [];
+let cpPostLikes = {};
 
 function loadRepDashboardNew() {
   if (!repCommunity) return;
@@ -3980,7 +4382,7 @@ function loadRepCommProfile() {
       }).catch(() => {});
   }
   // Render posts
-  renderPosts();
+  if (repCommunity?.community_id) loadAndRenderPosts(repCommunity.community_id);
 }
 
 function toggleCommEdit() {
@@ -4043,10 +4445,12 @@ function handleCoverUpload(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    commProfile.coverPhoto = e.target.result;
-    const key = 'hl_comm_profile_' + (repCommunity.community_id || '');
-    localStorage.setItem(key, JSON.stringify(commProfile));
-    loadRepCommProfile();
+    openCropTool(e.target.result, (cropped) => {
+      commProfile.coverPhoto = cropped;
+      const key = 'hl_comm_profile_' + (repCommunity.community_id || '');
+      localStorage.setItem(key, JSON.stringify(commProfile));
+      loadRepCommProfile();
+    }, 16/9);
   };
   reader.readAsDataURL(file);
 }
@@ -4055,17 +4459,50 @@ function handleCommAvatarUpload(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    commProfile.avatarPhoto = e.target.result;
-    repCommunity.photo = e.target.result;
-    const key = 'hl_comm_profile_' + (repCommunity.community_id || '');
-    localStorage.setItem(key, JSON.stringify(commProfile));
-    localStorage.setItem('hl_rep_community', JSON.stringify(repCommunity));
-    loadRepCommProfile();
+    openCropTool(e.target.result, (cropped) => {
+      commProfile.avatarPhoto = cropped;
+      repCommunity.photo = cropped;
+      const key = 'hl_comm_profile_' + (repCommunity.community_id || '');
+      localStorage.setItem(key, JSON.stringify(commProfile));
+      localStorage.setItem('hl_rep_community', JSON.stringify(repCommunity));
+      applyAvatar(cropped);
+      loadRepCommProfile();
+    }, 1);
   };
   reader.readAsDataURL(file);
 }
 
 let postPhotoData = null;
+async function loadAndRenderPosts(communityId) {
+  try {
+    const res = await fetch(API + '/posts/community/' + communityId);
+    const data = await res.json();
+    repPosts = data.data || data || [];
+    // Init likes state from liked_by array
+    const myId = user?.user_id || user?.id;
+    repPosts.forEach(p => {
+      const pid = p.post_id || p.id;
+      const likedBy = Array.isArray(p.liked_by) ? p.liked_by : [];
+      postLikes[pid] = likedBy.includes(myId);
+    });
+    renderPosts();
+  } catch(e) {
+    renderPosts();
+  }
+}
+
+async function deletePost(postId) {
+  try {
+    const res = await fetch(API + '/posts/' + postId, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (res.ok) {
+      const commId = repCommunity?.community_id;
+      if (commId) await loadAndRenderPosts(commId);
+    }
+  } catch(e) {}
+}
 function expandComposer() {
   document.getElementById('comm-post-actions').style.display = 'flex';
   document.getElementById('post-text').style.minHeight = '80px';
@@ -4074,21 +4511,36 @@ function handlePostPhoto(event) {
   const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    postPhotoData = e.target.result;
-    document.getElementById('post-photo-preview').innerHTML = '<img src="' + postPhotoData + '" style="height:48px;border-radius:6px;border:1px solid var(--border);" />';
+    openCropTool(e.target.result, (cropped) => {
+      postPhotoData = cropped;
+      document.getElementById('post-photo-preview').innerHTML = '<img src="' + cropped + '" style="height:80px;max-width:200px;border-radius:6px;border:1px solid var(--border);object-fit:cover;cursor:pointer;" onclick="openPhotoModal(\'' + cropped + '\')" />';
+    }, null);
   };
   reader.readAsDataURL(file);
 }
-function submitPost() {
+async function submitPost() {
   const text = document.getElementById('post-text').value.trim();
   if (!text && !postPhotoData) return;
-  const post = { id: Date.now(), text, photo: postPhotoData, time: 'Just now', likes: 0 };
-  repPosts.unshift(post);
-  document.getElementById('post-text').value = '';
-  document.getElementById('comm-post-actions').style.display = 'none';
-  document.getElementById('post-photo-preview').innerHTML = '';
-  postPhotoData = null;
-  renderPosts();
+  const commId = repCommunity?.community_id;
+  if (!commId) return;
+  const btn = document.querySelector('#comm-post-actions .btn-purple');
+  if (btn) { btn.disabled = true; btn.textContent = 'Posting...'; }
+  try {
+    const res = await fetch(API + '/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ text: text || '', community_id: commId, photo: postPhotoData || null })
+    });
+    if (!res.ok) { if (btn) { btn.disabled = false; btn.textContent = 'Post'; } return; }
+    document.getElementById('post-text').value = '';
+    document.getElementById('comm-post-actions').style.display = 'none';
+    document.getElementById('post-photo-preview').innerHTML = '';
+    postPhotoData = null;
+    if (btn) { btn.disabled = false; btn.textContent = 'Post'; }
+    await loadAndRenderPosts(commId);
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Post'; }
+  }
 }
 
 function renderPosts() {
@@ -4097,100 +4549,208 @@ function renderPosts() {
   if (!repPosts.length) {
     feed.innerHTML = '<div class="empty-state" style="margin-top:0;"><p>No posts yet. Share your first update!</p></div>'; return;
   }
+  const myId = user?.user_id || user?.id;
   feed.innerHTML = repPosts.map(p => {
-    const liked = postLikes[p.id];
+    const pid = p.post_id || p.id;
+    const liked = postLikes[pid];
+    const timeStr = p.createdAt ? formatTimeAgo(p.createdAt) : (p.time || 'Just now');
+    const posterName = p.User?.name || commProfile.name || 'Community';
     return '<div class="comm-post-card">'
       + '<div class="comm-post-header">'
-      + '<div class="comm-post-avatar" style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;flex-shrink:0;">' + (commProfile.avatarPhoto ? '<img src="' + commProfile.avatarPhoto + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"/>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg>') + '</div>'
-      + '<div class="comm-post-meta"><div class="name">' + (commProfile.name || 'Community') + '</div><div class="time">' + p.time + '</div></div>'
+      + '<div class="comm-post-avatar" style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+      + (commProfile.avatarPhoto ? '<img src="' + commProfile.avatarPhoto + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"/>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg>')
+      + '</div>'
+      + '<div class="comm-post-meta"><div class="name">' + (commProfile.name || posterName) + '</div><div class="time">' + timeStr + '</div></div>'
+      + (p.user_id === myId ? '<button onclick="deletePost(' + pid + ')" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:0.75rem;padding:0.25rem 0.5rem;border-radius:6px;margin-left:auto;font-family:\'DM Sans\',sans-serif;transition:0.15s;" onmouseover="this.style.background=\'var(--red-light)\';this.style.color=\'var(--red)\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--text2)\'">Delete</button>' : '')
       + '</div>'
       + (p.text ? '<div class="comm-post-body">' + p.text + '</div>' : '')
-      + (p.photo ? '<img class="comm-post-img" src="' + p.photo + '" style="cursor:zoom-in;" onclick="openPhotoModal(\'' + p.photo + '\')"/>' : '')
+      + (p.photo ? '<img src="' + p.photo + '" class="comm-post-img" onclick="openPhotoModal(\'' + p.photo + '\')" style="cursor:zoom-in;" />' : '')
       + '<div class="comm-post-footer">'
-      + '<button class="comm-post-action-btn' + (liked ? ' liked' : '') + '" onclick="toggleLike(' + p.id + ')">'
+      + '<button class="comm-post-action-btn' + (liked ? ' liked' : '') + '" onclick="toggleLike(' + pid + ')">'
       + '<svg width="14" height="14" viewBox="0 0 24 24" fill="' + (liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'
-      + (p.likes + (liked ? 1 : 0)) + ' Likes'
+      + ((p.likes || 0)) + ' Likes'
       + '</button>'
       + '</div></div>';
   }).join('');
 }
 
-function toggleLike(id) {
-  postLikes[id] = !postLikes[id];
-  renderPosts();
+async function toggleLike(postId) {
+  if (!token) return;
+  try {
+    const res = await fetch(API + '/posts/' + postId + '/like', {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (res.ok) {
+      postLikes[postId] = data.liked;
+      const commId = repCommunity?.community_id;
+      if (commId) await loadAndRenderPosts(commId);
+    }
+  } catch(e) {}
 }
 
 // EVENTS
-function loadRepEvents() {
-  renderEvents();
+async function loadRepEvents() {
+  const commId = repCommunity?.community_id;
+  const listEl = document.getElementById('events-list');
+  if (!listEl) return;
+ 
+  if (!commId) {
+    listEl.innerHTML = '<div class="empty-state"><p>No community found.</p></div>';
+    return;
+  }
+ 
+  listEl.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><p>Loading...</p></div>';
+ 
+  try {
+    const res = await fetch(API + '/events/community/' + commId);
+    const data = await res.json();
+    repEvents = data.data || [];
+    renderEvents();
+    // Update event count in stats
+    const csE = document.getElementById('cs-events');
+    if (csE) csE.textContent = repEvents.length;
+  } catch (e) {
+    listEl.innerHTML = '<div class="empty-state"><p>Could not load events.</p></div>';
+  }
 }
 
-function createEvent() {
+async function createActivity() {
   const title = document.getElementById('ev-title').value.trim();
   const date = document.getElementById('ev-date').value;
   const slots = document.getElementById('ev-slots').value;
   const type = document.getElementById('ev-type').value;
   const desc = document.getElementById('ev-desc').value.trim();
-  const msg = document.getElementById('ev-msg');
-  if (!title || !date || !desc) { msg.textContent = 'Please fill all required fields.'; msg.className = 'profile-field-msg err'; return; }
   const deadline = document.getElementById('ev-deadline')?.value || '';
-  const event = { id: Date.now(), title, date, deadline, slots: parseInt(slots) || 0, type, desc, photo: evPhotoData, applicants: 0, status: 'active' };
-  evPhotoData = null;
-  const prevEl = document.getElementById('ev-photo-preview');
-  if (prevEl) prevEl.innerHTML = '';
-  const photoInput = document.getElementById('ev-photo-input');
-  if (photoInput) photoInput.value = '';
-  repEvents.unshift(event);
-  document.getElementById('ev-title').value = '';
-  document.getElementById('ev-date').value = '';
-  document.getElementById('ev-slots').value = '';
-  document.getElementById('ev-desc').value = '';
-  msg.textContent = 'Event created!'; msg.className = 'profile-field-msg ok';
-  setTimeout(() => msg.textContent = '', 2500);
-  renderEvents();
-  // Update event count in stats
-  const csE = document.getElementById('cs-events');
-  if (csE) csE.textContent = repEvents.length;
+  const msg = document.getElementById('ev-msg');
+ 
+  if (!title || !date || !desc) {
+    msg.textContent = 'Please fill all required fields.';
+    msg.className = 'profile-field-msg err';
+    return;
+  }
+ 
+  const btn = document.querySelector('#dash-rep-events .btn-purple');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating...'; }
+ 
+  try {
+    const res = await fetch(API + '/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: JSON.stringify({
+        title,
+        description: desc,
+        event_date: date,
+        deadline: deadline || null,
+        slots: parseInt(slots) || 0,
+        type
+      })
+    });
+ 
+    const data = await res.json();
+ 
+    if (!res.ok) {
+      msg.textContent = data.message || 'Failed to create event.';
+      msg.className = 'profile-field-msg err';
+      if (btn) { btn.disabled = false; btn.textContent = 'Create Activity'; }
+      return;
+    }
+ 
+    // Reset form
+    document.getElementById('ev-title').value = '';
+    document.getElementById('ev-date').value = '';
+    document.getElementById('ev-slots').value = '';
+    document.getElementById('ev-desc').value = '';
+    if (document.getElementById('ev-deadline')) document.getElementById('ev-deadline').value = '';
+    evPhotoData = null;
+    const prevEl = document.getElementById('ev-photo-preview');
+    if (prevEl) prevEl.innerHTML = '';
+    const photoInput = document.getElementById('ev-photo-input');
+    if (photoInput) photoInput.value = '';
+ 
+    msg.textContent = 'Activity created successfully!';
+    msg.className = 'profile-field-msg ok';
+    setTimeout(() => { msg.textContent = ''; }, 2500);
+ 
+    if (btn) { btn.disabled = false; btn.textContent = 'Create Activity'; }
+ 
+    // Reload from backend
+    await loadRepEvents();
+ 
+  } catch (e) {
+    msg.textContent = 'Cannot connect to server.';
+    msg.className = 'profile-field-msg err';
+    if (btn) { btn.disabled = false; btn.textContent = 'Create Activity'; }
+  }
 }
 
 function renderEvents() {
   const el = document.getElementById('events-list');
   if (!el) return;
   if (!repEvents.length) {
-    el.innerHTML = '<div class="empty-state"><p>No events yet. Create your first event above!</p></div>'; return;
+    el.innerHTML = '<div class="empty-state"><p>No activities yet. Create your first activity above!</p></div>'; return;
   }
+
   const typeColors = { volunteer: 'var(--teal)', donation_drive: 'var(--purple)', community_event: 'var(--yellow-dark)' };
-  // Sort: active first, then by date
-  const sorted = [...repEvents].sort((a, b) => {
-    const aOver = a.date && new Date(a.date) < new Date();
-    const bOver = b.date && new Date(b.date) < new Date();
-    if (aOver !== bOver) return aOver ? 1 : -1;
-    return new Date(b.date) - new Date(a.date);
-  });
-  // Filter buttons
-  const filterHtml = '<div class="admin-filter-bar" style="margin-bottom:1.25rem;">'
-    + '<button class="admin-filter-btn active" onclick="filterEvents(this,\\x27all\\x27)">All</button>'
-    + '<button class="admin-filter-btn" onclick="filterEvents(this,\\x27active\\x27)">Ongoing</button>'
-    + '<button class="admin-filter-btn" onclick="filterEvents(this,\\x27past\\x27)">Past</button>'
-    + '</div>';
-  const listHtml = sorted.map(ev => {
-    const isPast = ev.date && new Date(ev.date) < new Date();
-    const statusClass = isPast ? 'status-rejected' : 'status-approved';
-    const statusText = isPast ? 'Ended' : 'Active';
-    return '<div class="event-card" data-status="' + (isPast ? 'past' : 'active') + '">'
-      + (ev.photo ? '<img src="' + ev.photo + '" style="width:100%;max-height:200px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:0.75rem;cursor:zoom-in;" onclick="openPhotoModal(\'' + ev.photo + '\')" />' : '')
-      + '<div class="event-card-left">'
-      + '<div class="event-card-title">' + ev.title + '</div>'
-      + '<div class="event-card-meta">📅 ' + ev.date + (ev.deadline ? ' &bull; Deadline: ' + ev.deadline : '') + ' &bull; <span style="color:' + (typeColors[ev.type] || 'var(--text2)') + ';font-weight:600;">' + ev.type.replace(/_/g, ' ') + '</span></div>'
-      + '<div class="event-card-desc">' + ev.desc + '</div>'
-      + '</div>'
-      + '<div class="event-card-right">'
-      + (ev.slots ? '<div class="event-slots"><strong>' + ev.slots + '</strong><br>slots</div>' : '')
-      + '<span class="status-badge ' + statusClass + '">' + statusText + '</span>'
-      + '</div></div>';
-  }).join('') || '<div class="empty-state"><p>No activities yet.</p></div>';
-  el.innerHTML = filterHtml + '<div id="events-list-inner">' + listHtml + '</div>';
+  const typeBg = { volunteer: 'var(--teal-light)', donation_drive: 'var(--purple-light)', community_event: 'var(--yellow-light)' };
+
+  function renderFiltered(filter) {
+    const inner = document.getElementById('events-list-inner');
+    if (!inner) return;
+    const filtered = repEvents.filter(ev => {
+      const isPast = ev.event_date && new Date(ev.event_date) < new Date();
+      if (filter === 'active') return !isPast && ev.status !== 'ended';
+      if (filter === 'past') return isPast || ev.status === 'ended';
+      return true;
+    });
+    if (!filtered.length) {
+      inner.innerHTML = '<div class="empty-state"><p>No activities found.</p></div>'; return;
+    }
+    inner.innerHTML = filtered.map(ev => {
+      const isPast = ev.event_date && new Date(ev.event_date) < new Date() || ev.status === 'ended';
+      const typeLabel = (ev.type || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const dateFormatted = ev.event_date ? new Date(ev.event_date + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : '-';
+      const deadlineFormatted = ev.deadline ? new Date(ev.deadline + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}) : null;
+      return '<div class="event-card" style="flex-direction:column;gap:0;">'
+        + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.75rem;">'
+        + '<div style="flex:1;">'
+        + '<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">'
+        + '<span style="font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:20px;background:' + typeBg[ev.type] + ';color:' + typeColors[ev.type] + ';">' + typeLabel + '</span>'
+        + '<span class="status-badge ' + (isPast ? 'status-rejected' : 'status-approved') + '">' + (isPast ? 'Ended' : 'Active') + '</span>'
+        + '</div>'
+        + '<div style="font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:0.4rem;">' + ev.title + '</div>'
+        + (ev.description ? '<div style="font-size:0.85rem;color:var(--text2);line-height:1.6;">' + ev.description + '</div>' : '')
+        + '</div>'
+        + (ev.slots ? '<div style="flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--purple-light);border-radius:20px;padding:0.35rem 0.85rem;align-self:flex-start;"><span style="font-weight:700;color:var(--purple);font-size:0.95rem;">' + ev.slots + '</span><span style="font-size:0.72rem;color:var(--purple);opacity:0.8;font-weight:600;">slots</span></div>' : '')
+        + '</div>'
+        + '<div style="display:flex;gap:1.5rem;padding-top:0.75rem;border-top:1px solid var(--border);flex-wrap:wrap;">'
+        + '<div style="display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--text2);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Date: <strong style="color:var(--text);">' + dateFormatted + '</strong></div>'
+        + (deadlineFormatted ? '<div style="display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--text2);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Deadline: <strong style="color:var(--text);">' + deadlineFormatted + '</strong></div>' : '')
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  const filterHtml = '<div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;" id="ev-filter-bar">'
+    + '<button class="admin-filter-btn active" id="evf-all" onclick="setEvFilter(this,&quot;all&quot;)">All</button>'
+    + '<button class="admin-filter-btn" id="evf-active" onclick="setEvFilter(this,&quot;active&quot;)">Ongoing</button>'
+    + '<button class="admin-filter-btn" id="evf-past" onclick="setEvFilter(this,&quot;past&quot;)">Past</button>'
+    + '</div><div id="events-list-inner"></div>';
+
+  el.innerHTML = filterHtml;
+  renderFiltered('all');
+
+  window.setEvFilter = function(btn, filter) {
+    document.querySelectorAll('#ev-filter-bar .admin-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderFiltered(filter);
+  };
 }
+
 
 // VOLUNTEERS & DONATIONS tab
 function switchVDTab(tab) {
@@ -4229,7 +4789,9 @@ function loadRepVolDon() {
           + '<button class="btn btn-teal btn-sm" onclick="updateVolApp(' + a.application_id + ', \'approved\', this)">Approve</button>'
           + '<button class="btn btn-sm" style="background:var(--red-light);color:var(--red);" onclick="updateVolApp(' + a.application_id + ', \'rejected\', this)">Reject</button>'
           + '</div>'
-        : '';
+        : status === 'approved'
+          ? '<div style="margin-top:0.5rem;"><button class="btn btn-sm btn-outline" style="font-size:0.75rem;" onclick="openRepRateModal(' + a.user_id + ', &quot;' + name.replace(/'/g, "\\'") + '&quot;)">Rate Volunteer</button></div>'
+          : '';
       const skills = a.skills || '';
       const availability = a.availability || '';
       const motivation = a.motivation || '';
@@ -4306,8 +4868,9 @@ async function loadRepNotif() {
     const data = await res.json();
     const notifs = data.data || [];
     const unread = notifs.filter(n => !n.is_read).length;
-    const badge = document.getElementById('rep-notif-badge');
-    if (badge) { badge.textContent = unread; badge.style.display = unread > 0 ? 'inline' : 'none'; }
+    // Update navbar bell badge
+    const navBadge = document.getElementById('nav-notif-badge');
+    if (navBadge) { navBadge.textContent = unread; navBadge.style.display = unread > 0 ? 'inline' : 'none'; }
     if (!notifs.length) { el.innerHTML = '<div class="empty-state"><p>No notifications yet.</p></div>'; return; }
     const iconMap = {
       donation: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
@@ -4390,19 +4953,29 @@ async function saveRepProfile() {
 
 function handleRepAvatarUpload(event) {
   const file = event.target.files[0]; if (!file) return;
-  if (!confirm('Use this photo as your profile picture? Make sure it represents your community (logo or relevant image).')) return;
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = async e => {
     const dataUrl = e.target.result;
-    localStorage.setItem('hl_avatar', dataUrl);
-    // Update community avatar too
-    commProfile.avatarPhoto = dataUrl;
-    if (repCommunity) repCommunity.photo = dataUrl;
-    const key = 'hl_comm_profile_' + (repCommunity?.community_id || '');
-    localStorage.setItem(key, JSON.stringify(commProfile));
-    localStorage.setItem('hl_rep_community', JSON.stringify(repCommunity));
-    // Update all avatars
+    // Apply immediately
     applyAvatar(dataUrl);
+    // Save to backend
+    try {
+      const res = await fetch(API + '/auth/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          phone_number: user.phone_number || '',
+          profile_picture: dataUrl
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        user.profile_picture = data.data.profile_picture;
+        localStorage.setItem('hl_user', JSON.stringify(user));
+      }
+    } catch(e) { console.error('Could not save avatar:', e); }
     loadRepProfilePage();
   };
   reader.readAsDataURL(file);
@@ -4431,7 +5004,7 @@ function loadRepProfilePage() {
 }
 
 // -- COMMUNITY REP --
-let repCommunity = null;
+let repCommunity = JSON.parse(localStorage.getItem('hl_rep_community') || 'null');
 
 function showRepSection(section) {
   // Hide ALL sections completely
@@ -4497,6 +5070,10 @@ async function loadRepDashboard() {
       showRepSection('rep-register');
       document.getElementById('sb-rep-register').style.display = 'flex';
       document.getElementById('sb-rep-register').classList.add('active');
+    } else if (repCommunity.verification_status === 'pending') {
+      // Still pending - go to home with pending state
+      showPendingLockdown(repCommunity);
+      return;
     } else if (repCommunity.verification_status === 'approved') {
       // Hide admin sidebar
       const adminSbEl = document.getElementById('admin-sidebar-section');
@@ -4615,13 +5192,29 @@ async function openCommunityProfile(communityId, fromPage) {
 }
 
 function renderCommunityProfile(comm) {
+  // Load photos from localStorage (stored by community rep)
+  const commId = comm.community_id || comm.id;
+  const storedCommProfile = JSON.parse(localStorage.getItem('hl_comm_profile_' + commId) || '{}');
+
   // Cover
   const cover = document.getElementById('cp-cover');
-  if (cover) cover.style.background = 'linear-gradient(135deg, var(--purple), var(--teal))';
+  if (cover) {
+    if (storedCommProfile.coverPhoto) {
+      cover.innerHTML = '<img src="' + storedCommProfile.coverPhoto + '" style="width:100%;height:100%;object-fit:cover;" />';
+    } else {
+      cover.style.background = 'linear-gradient(135deg, var(--purple), var(--teal))';
+    }
+  }
 
   // Avatar
   const avatar = document.getElementById('cp-avatar');
-  if (avatar) avatar.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>';
+  if (avatar) {
+    if (storedCommProfile.avatarPhoto) {
+      avatar.innerHTML = '<img src="' + storedCommProfile.avatarPhoto + '" style="width:100%;height:100%;object-fit:cover;border-radius:13px;" />';
+    } else {
+      avatar.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>';
+    }
+  }
 
   // Info
   const nameEl = document.getElementById('cp-name');
@@ -4641,7 +5234,6 @@ function renderCommunityProfile(comm) {
   document.getElementById('cp-events').textContent = '-';
 
   // Fetch real volunteer count for this community
-  const commId = comm.community_id || comm.id;
   if (commId) {
     fetch(API + '/volunteers/community/' + commId)
     .then(r => r.json()).then(d => {
@@ -4650,6 +5242,23 @@ function renderCommunityProfile(comm) {
       const cpV = document.getElementById('cp-volunteers');
       if (cpV) cpV.textContent = approved;
     }).catch(() => {});
+  }
+
+  // Update volunteer button based on membership status
+  const volBtn = document.getElementById('cp-vol-btn');
+  if (volBtn) {
+    const commId2 = comm.community_id || comm.id;
+    if (myApprovedCommunityIds.includes(commId2)) {
+      volBtn.textContent = '✓ Active Volunteer';
+      volBtn.style.background = 'var(--green-light)';
+      volBtn.style.color = 'var(--green)';
+      volBtn.style.borderColor = 'rgba(26,158,117,0.3)';
+    } else {
+      volBtn.textContent = 'Volunteer';
+      volBtn.style.background = '';
+      volBtn.style.color = '';
+      volBtn.style.borderColor = '';
+    }
   }
 
   // About
@@ -4676,8 +5285,144 @@ function renderCommunityProfile(comm) {
     contactEl.innerHTML = html;
   }
 
-  // Posts — empty for now (no backend yet)
-  document.getElementById('cp-posts').innerHTML = '<div class="empty-state"><p>No posts yet from this community.</p></div>';
+  // Activities — load from API
+  if (commId) loadCpActivities(commId);
+
+  // Posts — load from API
+  const cpPostEl = document.getElementById('cp-posts');
+  cpPostEl.innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
+  if (commId) {
+    fetch(API + '/posts/community/' + commId)
+      .then(r => r.json())
+      .then(d => {
+        const posts = d.data || d || [];
+        if (!posts.length) { cpPostEl.innerHTML = '<div class="empty-state"><p>No posts yet from this community.</p></div>'; return; }
+        cpPosts = posts;
+        // Init likes state from liked_by array
+        const myId2 = user?.user_id || user?.id;
+        cpPosts.forEach(p => {
+          const pid = p.post_id || p.id;
+          const likedBy = Array.isArray(p.liked_by) ? p.liked_by : [];
+          cpPostLikes[pid] = likedBy.includes(myId2);
+        });
+        renderCpPosts(comm);
+      }).catch(() => {
+        cpPostEl.innerHTML = '<div class="empty-state"><p>No posts yet from this community.</p></div>';
+      });
+  }
+}
+
+async function loadCpActivities(communityId) {
+  const el = document.getElementById('cp-activities');
+  if (!el) return;
+
+  try {
+    const res = await fetch(API + '/events/community/' + communityId);
+    const data = await res.json();
+    const events = (data.data || []).filter(ev => ev.status !== 'ended');
+
+    if (!events.length) {
+      el.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><p>No activities yet from this community.</p></div>';
+      return;
+    }
+
+    const typeColors = { volunteer: 'var(--teal)', donation_drive: 'var(--purple)', community_event: 'var(--yellow-dark)' };
+    const typeBg = { volunteer: 'var(--teal-light)', donation_drive: 'var(--purple-light)', community_event: 'var(--yellow-light)' };
+    const isApprovedVol = myApprovedCommunityIds.includes(communityId);
+
+    el.innerHTML = events.map(ev => {
+      const typeLabel = (ev.type || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const dateFormatted = ev.event_date
+        ? new Date(ev.event_date + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'})
+        : '-';
+      const deadlineFormatted = ev.deadline
+        ? new Date(ev.deadline + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'})
+        : null;
+      const deadlinePassed = ev.deadline && new Date(ev.deadline) < new Date();
+
+      const alreadyRegistered = myRegisteredEventIds.includes(ev.event_id);
+      const isFull = ev.slots > 0 && ev.slots_remaining === 0;
+      const registerBtn = token && isApprovedVol && !deadlinePassed
+        ? (alreadyRegistered
+            ? '<button class="btn btn-sm" disabled style="background:var(--green-light);color:var(--green);border:1px solid rgba(26,158,117,0.3);cursor:default;">Registered</button>'
+            : isFull
+              ? '<button class="btn btn-sm" disabled style="background:var(--red-light);color:var(--red);border:1px solid rgba(192,57,43,0.2);cursor:default;">Full</button>'
+              : '<button class="btn btn-teal btn-sm" onclick="registerToEvent(' + ev.event_id + ', \'' + (ev.title||'').replace(/'/g, "\\'") + '\')">Register</button>')
+        : token && !isApprovedVol
+          ? '<span style="font-size:0.75rem;color:var(--text2);">Volunteer to join activities</span>'
+          : '';
+
+      return '<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.4rem;margin-bottom:0.75rem;box-shadow:var(--shadow-sm);">'
+        + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">'
+        + '<div style="flex:1;">'
+        + '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap;">'
+        + '<span style="font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:20px;background:' + (typeBg[ev.type]||'var(--bg2)') + ';color:' + (typeColors[ev.type]||'var(--text2)') + ';">' + typeLabel + '</span>'
+        + '</div>'
+        + '<div style="font-weight:600;font-size:0.95rem;color:var(--text);margin-bottom:0.3rem;">' + ev.title + '</div>'
+        + (ev.description ? '<div style="font-size:0.82rem;color:var(--text2);line-height:1.5;margin-bottom:0.5rem;">' + ev.description + '</div>' : '')
+        + '<div style="font-size:0.78rem;color:var(--text2);">Date: <strong style="color:var(--text);">' + dateFormatted + '</strong>'
+        + (deadlineFormatted ? ' &nbsp;·&nbsp; Deadline: <strong style="color:' + (deadlinePassed ? 'var(--red)' : 'var(--text)') + ';">' + deadlineFormatted + '</strong>' : '')
+        + (ev.slots ? ' &nbsp;·&nbsp; <strong style="color:var(--purple);">' + ev.slots + ' slots total</strong>' + (ev.slots_remaining !== null && ev.slots_remaining !== undefined ? ' <span style="color:' + (ev.slots_remaining === 0 ? 'var(--red)' : 'var(--green)') + ';font-weight:600;">(' + ev.slots_remaining + ' remaining)</span>' : '') : '')
+        + '</div>'
+        + '</div>'
+        + (registerBtn ? '<div style="flex-shrink:0;">' + registerBtn + '</div>' : '')
+        + '</div></div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><p>Could not load activities.</p></div>';
+  }
+}
+
+function renderCpPosts(comm) {
+  const cpPostEl = document.getElementById('cp-posts');
+  if (!cpPostEl) return;
+  if (!cpPosts.length) {
+    cpPostEl.innerHTML = '<div class="empty-state"><p>No posts yet from this community.</p></div>'; return;
+  }
+  const commId = comm ? (comm.community_id || comm.id) : null;
+  cpPostEl.innerHTML = cpPosts.map(p => {
+    const pid = p.post_id || p.id;
+    const liked = cpPostLikes[pid];
+    const timeStr = p.createdAt ? formatTimeAgo(p.createdAt) : 'Some time ago';
+    const likeBtn = token
+      ? '<button class="comm-post-action-btn' + (liked ? ' liked' : '') + '" onclick="toggleCpLike(' + pid + ',' + commId + ')">'
+        + '<svg width="14" height="14" viewBox="0 0 24 24" fill="' + (liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'
+        + ((p.likes || 0)) + ' Likes</button>'
+      : '<span style="font-size:0.8rem;color:var(--text2);">❤ ' + (p.likes || 0) + ' Likes</span>';
+    return '<div class="comm-post-card">'
+      + '<div class="comm-post-header">'
+      + '<div class="comm-post-avatar" style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg></div>'
+      + '<div class="comm-post-meta"><div class="name">' + ((comm && comm.name) || 'Community') + '</div><div class="time">' + timeStr + '</div></div>'
+      + '</div>'
+      + (p.text ? '<div class="comm-post-body">' + p.text + '</div>' : '')
+      + (p.photo ? '<img src="' + p.photo + '" class="comm-post-img" onclick="openPhotoModal(\'' + p.photo + '\')" style="cursor:zoom-in;" />' : '')
+      + '<div class="comm-post-footer">' + likeBtn + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+async function toggleCpLike(postId, communityId) {
+  if (!token) { showPage('login'); return; }
+  try {
+    const res = await fetch(API + '/posts/' + postId + '/like', {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (res.ok) {
+      cpPostLikes[postId] = data.liked;
+      const refreshRes = await fetch(API + '/posts/community/' + communityId);
+      const refreshData = await refreshRes.json();
+      cpPosts = refreshData.data || refreshData || [];
+      const myId3 = user?.user_id || user?.id;
+      cpPosts.forEach(p => {
+        const pid = p.post_id || p.id;
+        const likedBy = Array.isArray(p.liked_by) ? p.liked_by : [];
+        cpPostLikes[pid] = likedBy.includes(myId3);
+      });
+      renderCpPosts(currentProfileCommunity);
+    }
+  } catch(e) {}
 }
 
 function goBackFromCommunity() {
@@ -4703,6 +5448,10 @@ function openVolunteerFromProfile() {
   if (!token) { showPage('login'); return; }
   const id = currentProfileCommunity.community_id || currentProfileCommunity.id;
   const name = currentProfileCommunity.name;
+  if (myApprovedCommunityIds.includes(id)) {
+    alert('You are already an active volunteer of this community! Check your My Volunteer page to see available events.');
+    return;
+  }
   openVolunteer(id, name);
 }
 
@@ -4742,6 +5491,336 @@ if (token && user) {
 } else {
   loadHomeCommunities();
 }
+
+
+
+// ═══ CROP TOOL ═══
+let cropState = {
+  callback: null,
+  aspectRatio: null, // null=free, 16/9, 1/1, etc
+  box: { x:0, y:0, w:0, h:0 },
+  drag: null, // { type:'move'|'nw'|'ne'|'sw'|'se'|'n'|'s'|'e'|'w', startX, startY, startBox }
+  imgW: 0, imgH: 0
+};
+
+function openCropTool(imgSrc, callback, aspectRatio) {
+  cropState.callback = callback;
+  cropState.aspectRatio = aspectRatio || null;
+  const img = document.getElementById('crop-img');
+  const wrap = document.getElementById('crop-wrap');
+  const hint = document.getElementById('crop-hint');
+
+  // Hide edge handles for fixed AR
+  document.querySelectorAll('.crop-edge-handle').forEach(h => {
+    h.style.display = aspectRatio ? 'none' : 'block';
+  });
+
+  if (hint) {
+    hint.textContent = aspectRatio
+      ? 'Drag to reposition · Drag corners to resize'
+      : 'Drag to move · Drag corners/edges to resize';
+  }
+
+  img.onload = () => {
+    cropState.imgW = img.naturalWidth;
+    cropState.imgH = img.naturalHeight;
+    // Init crop box to full image
+    const rendered = img.getBoundingClientRect();
+    const rW = img.offsetWidth;
+    const rH = img.offsetHeight;
+
+    let bw, bh;
+    if (aspectRatio) {
+      // Cover most of image with given AR
+      if (rW / rH > aspectRatio) {
+        bh = rH * 0.85;
+        bw = bh * aspectRatio;
+      } else {
+        bw = rW * 0.85;
+        bh = bw / aspectRatio;
+      }
+    } else {
+      bw = rW * 0.85;
+      bh = rH * 0.85;
+    }
+    cropState.box = {
+      x: (rW - bw) / 2,
+      y: (rH - bh) / 2,
+      w: bw,
+      h: bh
+    };
+    updateCropBox();
+  };
+
+  img.src = imgSrc;
+  document.getElementById('modal-crop').classList.add('open');
+  setupCropEvents();
+}
+
+function updateCropBox() {
+  const box = document.getElementById('crop-box');
+  const { x, y, w, h } = cropState.box;
+  box.style.left = x + 'px';
+  box.style.top = y + 'px';
+  box.style.width = w + 'px';
+  box.style.height = h + 'px';
+}
+
+function setupCropEvents() {
+  const wrap = document.getElementById('crop-wrap');
+  const box = document.getElementById('crop-box');
+
+  // Remove old listeners
+  wrap.onmousedown = null;
+  box.onmousedown = null;
+
+  // Box drag (move)
+  box.onmousedown = (e) => {
+    if (e.target.classList.contains('crop-handle')) return;
+    e.preventDefault();
+    cropState.drag = { type: 'move', startX: e.clientX, startY: e.clientY, startBox: { ...cropState.box } };
+  };
+
+  // Handle resize
+  document.querySelectorAll('.crop-handle').forEach(h => {
+    h.onmousedown = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      cropState.drag = { type: h.dataset.pos, startX: e.clientX, startY: e.clientY, startBox: { ...cropState.box } };
+    };
+  });
+
+  document.onmousemove = (e) => {
+    if (!cropState.drag) return;
+    const img = document.getElementById('crop-img');
+    const maxW = img.offsetWidth;
+    const maxH = img.offsetHeight;
+    const dx = e.clientX - cropState.drag.startX;
+    const dy = e.clientY - cropState.drag.startY;
+    const sb = cropState.drag.startBox;
+    const ar = cropState.aspectRatio;
+    let { x, y, w, h } = { ...sb };
+    const MIN = 60;
+
+    if (cropState.drag.type === 'move') {
+      x = Math.max(0, Math.min(maxW - w, sb.x + dx));
+      y = Math.max(0, Math.min(maxH - h, sb.y + dy));
+    } else {
+      // Resize
+      const pos = cropState.drag.type;
+      if (pos.includes('e')) w = Math.max(MIN, sb.w + dx);
+      if (pos.includes('s')) h = Math.max(MIN, sb.h + dy);
+      if (pos.includes('w')) { w = Math.max(MIN, sb.w - dx); x = sb.x + sb.w - w; }
+      if (pos.includes('n')) { h = Math.max(MIN, sb.h - dy); y = sb.y + sb.h - h; }
+
+      // Enforce aspect ratio on corner drags
+      if (ar && (pos === 'nw' || pos === 'ne' || pos === 'sw' || pos === 'se')) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          h = w / ar;
+          if (pos.includes('n')) y = sb.y + sb.h - h;
+        } else {
+          w = h * ar;
+          if (pos.includes('w')) x = sb.x + sb.w - w;
+        }
+      }
+
+      // Clamp to image bounds
+      if (x < 0) { w += x; x = 0; }
+      if (y < 0) { h += y; y = 0; }
+      if (x + w > maxW) w = maxW - x;
+      if (y + h > maxH) h = maxH - y;
+    }
+
+    cropState.box = { x, y, w, h };
+    updateCropBox();
+  };
+
+  document.onmouseup = () => { cropState.drag = null; };
+}
+
+function applyCrop() {
+  const img = document.getElementById('crop-img');
+  const { x, y, w, h } = cropState.box;
+  const scaleX = cropState.imgW / img.offsetWidth;
+  const scaleY = cropState.imgH / img.offsetHeight;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(w * scaleX);
+  canvas.height = Math.round(h * scaleY);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img,
+    x * scaleX, y * scaleY, w * scaleX, h * scaleY,
+    0, 0, canvas.width, canvas.height
+  );
+
+  document.getElementById('modal-crop').classList.remove('open');
+  if (cropState.callback) cropState.callback(canvas.toDataURL('image/jpeg', 0.9));
+}
+
+function cancelCrop() {
+  document.getElementById('modal-crop').classList.remove('open');
+}
+
+
+// ═══ RATING SYSTEM ═══
+async function openRepRateModal(donorId, donorName) {
+  // Get past events for this community to select which to rate
+  const commId = repCommunity?.community_id;
+  if (!commId) return;
+  try {
+    const res = await fetch(API + '/events/community/' + commId);
+    const data = await res.json();
+    const pastEvents = (data.data || []).filter(ev => ev.event_date && new Date(ev.event_date) < new Date());
+    if (!pastEvents.length) {
+      alert('No past activities to rate for.'); return;
+    }
+    // Use first past event for simplicity, or pick most recent
+    const event = pastEvents[pastEvents.length - 1];
+    openRatingModal(event.event_id, 'donor', donorId, donorName);
+  } catch(e) { alert('Could not load events.'); }
+}
+
+let ratingState = { eventId: null, type: null, targetId: null, score: 0 };
+const starLabels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+function openRatingModal(eventId, type, targetId, title) {
+  ratingState = { eventId, type, targetId, score: 0 };
+  document.getElementById('rating-modal-title').textContent = type === 'donor' ? 'Rate ' + title : 'Rate this Community';
+  document.getElementById('rating-modal-sub').textContent = type === 'donor' ? "Rate this volunteer's participation" : 'How was your experience with ' + title + '?';
+  document.getElementById('rating-review').value = '';
+  document.getElementById('rating-alert').innerHTML = '';
+  document.getElementById('star-label').textContent = 'Select a rating';
+  selectStar(0);
+  document.getElementById('modal-rating').classList.add('open');
+}
+
+function selectStar(val) {
+  ratingState.score = val;
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.style.color = parseInt(btn.dataset.val) <= val ? 'var(--yellow)' : 'var(--border)';
+  });
+  document.getElementById('star-label').textContent = val > 0 ? starLabels[val] : 'Select a rating';
+}
+
+async function submitRating() {
+  const { eventId, type, targetId, score } = ratingState;
+  const review = document.getElementById('rating-review').value.trim();
+  if (!score) {
+    showAlert('rating-alert', 'Please select a rating!', 'err'); return;
+  }
+
+  try {
+    let url, body;
+    if (type === 'community') {
+      url = API + '/ratings/event/' + eventId + '/community';
+      body = { score, review };
+    } else {
+      url = API + '/ratings/event/' + eventId + '/donor/' + targetId;
+      body = { score, review };
+    }
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) { showAlert('rating-alert', data.message || 'Failed to submit rating', 'err'); return; }
+    showAlert('rating-alert', 'Rating submitted! Thank you.', 'ok');
+    setTimeout(() => {
+      closeModal('modal-rating');
+      // Refresh relevant section
+      if (type === 'community') loadMyRegisteredActivities();
+      else loadRepVolDon();
+    }, 1500);
+  } catch(e) {
+    showAlert('rating-alert', 'Could not connect to server.', 'err');
+  }
+}
+
 </script>
+
+<!-- ═══ CROP MODAL ═══ -->
+<div class="modal-overlay" id="modal-crop" style="z-index:300;background:rgba(0,0,0,0.85);">
+  <div style="background:var(--white);border-radius:var(--radius-lg);padding:1.75rem;width:100%;max-width:560px;box-shadow:var(--shadow-lg);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--text);">Crop Photo</div>
+        <div style="font-size:0.8rem;color:var(--text2);margin-top:2px;" id="crop-hint">Drag to reposition · Drag corners to resize</div>
+      </div>
+      <button class="modal-close" onclick="cancelCrop()">&times;</button>
+    </div>
+    <!-- Canvas area -->
+    <div style="position:relative;width:100%;background:#111;border-radius:var(--radius);overflow:hidden;touch-action:none;" id="crop-wrap">
+      <img id="crop-img" style="display:block;max-width:100%;user-select:none;" draggable="false" />
+      <!-- Dark overlay with crop box cutout -->
+      <canvas id="crop-overlay" style="position:absolute;top:0;left:0;pointer-events:none;"></canvas>
+      <!-- Crop box -->
+      <div id="crop-box" style="position:absolute;border:2px solid white;box-shadow:0 0 0 9999px rgba(0,0,0,0.55);cursor:move;box-sizing:border-box;">
+        <!-- Grid lines -->
+        <div style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;pointer-events:none;">
+          <div style="border-right:1px solid rgba(255,255,255,0.3);border-bottom:1px solid rgba(255,255,255,0.3);"></div>
+          <div style="border-right:1px solid rgba(255,255,255,0.3);border-bottom:1px solid rgba(255,255,255,0.3);"></div>
+          <div style="border-bottom:1px solid rgba(255,255,255,0.3);"></div>
+          <div style="border-right:1px solid rgba(255,255,255,0.3);border-bottom:1px solid rgba(255,255,255,0.3);"></div>
+          <div style="border-right:1px solid rgba(255,255,255,0.3);border-bottom:1px solid rgba(255,255,255,0.3);"></div>
+          <div style="border-bottom:1px solid rgba(255,255,255,0.3);"></div>
+          <div style="border-right:1px solid rgba(255,255,255,0.3);"></div>
+          <div style="border-right:1px solid rgba(255,255,255,0.3);"></div>
+          <div></div>
+        </div>
+        <!-- Corner handles -->
+        <div class="crop-handle" data-pos="nw" style="position:absolute;top:-6px;left:-6px;width:14px;height:14px;background:white;border-radius:2px;cursor:nw-resize;"></div>
+        <div class="crop-handle" data-pos="ne" style="position:absolute;top:-6px;right:-6px;width:14px;height:14px;background:white;border-radius:2px;cursor:ne-resize;"></div>
+        <div class="crop-handle" data-pos="sw" style="position:absolute;bottom:-6px;left:-6px;width:14px;height:14px;background:white;border-radius:2px;cursor:sw-resize;"></div>
+        <div class="crop-handle" data-pos="se" style="position:absolute;bottom:-6px;right:-6px;width:14px;height:14px;background:white;border-radius:2px;cursor:se-resize;"></div>
+        <!-- Edge handles (hidden for fixed AR) -->
+        <div class="crop-handle crop-edge-handle" data-pos="n" style="position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:20px;height:10px;background:white;border-radius:2px;cursor:n-resize;"></div>
+        <div class="crop-handle crop-edge-handle" data-pos="s" style="position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:20px;height:10px;background:white;border-radius:2px;cursor:s-resize;"></div>
+        <div class="crop-handle crop-edge-handle" data-pos="w" style="position:absolute;top:50%;left:-5px;transform:translateY(-50%);width:10px;height:20px;background:white;border-radius:2px;cursor:w-resize;"></div>
+        <div class="crop-handle crop-edge-handle" data-pos="e" style="position:absolute;top:50%;right:-5px;transform:translateY(-50%);width:10px;height:20px;background:white;border-radius:2px;cursor:e-resize;"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.75rem;margin-top:1.25rem;">
+      <button class="btn btn-outline" onclick="cancelCrop()" style="flex:1;justify-content:center;">Cancel</button>
+      <button class="btn btn-purple" onclick="applyCrop()" style="flex:1;justify-content:center;">Use this photo</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ RATING MODAL ═══ -->
+<div class="modal-overlay" id="modal-rating">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <div>
+        <h3 id="rating-modal-title">Rate this Community</h3>
+        <p id="rating-modal-sub">Share your experience</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-rating')">&times;</button>
+    </div>
+    <div id="rating-alert"></div>
+    <!-- Star rating -->
+    <div style="text-align:center;margin:1.25rem 0;">
+      <div style="display:flex;justify-content:center;gap:0.5rem;margin-bottom:0.75rem;" id="star-container">
+        <button class="star-btn" data-val="1" onclick="selectStar(1)" style="font-size:2rem;background:none;border:none;cursor:pointer;color:var(--border);transition:color 0.15s;">&#9733;</button>
+        <button class="star-btn" data-val="2" onclick="selectStar(2)" style="font-size:2rem;background:none;border:none;cursor:pointer;color:var(--border);transition:color 0.15s;">&#9733;</button>
+        <button class="star-btn" data-val="3" onclick="selectStar(3)" style="font-size:2rem;background:none;border:none;cursor:pointer;color:var(--border);transition:color 0.15s;">&#9733;</button>
+        <button class="star-btn" data-val="4" onclick="selectStar(4)" style="font-size:2rem;background:none;border:none;cursor:pointer;color:var(--border);transition:color 0.15s;">&#9733;</button>
+        <button class="star-btn" data-val="5" onclick="selectStar(5)" style="font-size:2rem;background:none;border:none;cursor:pointer;color:var(--border);transition:color 0.15s;">&#9733;</button>
+      </div>
+      <div style="font-size:0.85rem;color:var(--text2);" id="star-label">Select a rating</div>
+    </div>
+    <div class="form-group">
+      <label>Review (optional)</label>
+      <textarea id="rating-review" placeholder="Share your experience..." rows="3"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('modal-rating')">Cancel</button>
+      <button class="btn btn-purple" onclick="submitRating()">Submit Rating</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

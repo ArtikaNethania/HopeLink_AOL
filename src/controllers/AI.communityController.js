@@ -4,7 +4,7 @@ const User = require('../models/AI.User');
 const communityController = {
   async registerCommunity(req, res, next) {
     try {
-      const { name, location, description } = req.body;
+      const { name, location, description, category } = req.body;
       const { userId } = req.user;
 
       if (!name) {
@@ -13,18 +13,22 @@ const communityController = {
 
       const existing = await Community.findOne({ where: { name } });
       if (existing) {
-        return res.status(409).json({ success: false, message: 'Community name already registered' });
+        return res.status(409).json({ success: false, message: 'Community name is already registered' });
       }
 
       const code = name.substring(0, 3).toUpperCase() + Date.now();
 
       const community = await Community.create({
-        name, location, description, code,
+        name, location, description, category, code,
         community_rep_id: userId,
         verification_status: 'pending'
       });
 
-      res.status(201).json({ success: true, message: 'Community registered successfully', data: community });
+      res.status(201).json({
+        success: true,
+        message: 'Community registered successfully. Awaiting admin verification.',
+        data: community
+      });
     } catch (error) {
       next(error);
     }
@@ -89,7 +93,7 @@ const communityController = {
       if (website !== undefined) community.website = website;
       await community.save();
 
-      res.json({ success: true, message: 'Community updated', data: community });
+      res.json({ success: true, message: 'Community updated successfully', data: community });
     } catch (error) {
       next(error);
     }

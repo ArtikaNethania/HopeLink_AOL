@@ -7,7 +7,9 @@ const PORT = process.env.PORT || 5000;
 sequelize.authenticate()
   .then(() => {
     console.log('✓ Database connected');
-    return sequelize.sync({ alter: true });
+    // alter: true sementara untuk create tabel event_registrations
+    // Setelah server berhasil jalan sekali, ganti ke alter: false
+    return sequelize.sync({ alter: false });
   })
   .then(() => {
     console.log('✓ Models synced');

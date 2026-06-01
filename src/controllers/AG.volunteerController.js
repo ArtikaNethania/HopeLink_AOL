@@ -8,7 +8,7 @@ async function createNotif(userId, type, title, body) {
   try {
     await Notification.create({ user_id: userId, type, title, body });
   } catch (e) {
-    console.error('Notif error:', e.message);
+    console.error('Notification error:', e.message);
   }
 }
 
@@ -19,12 +19,12 @@ const volunteerController = {
       const { userId } = req.user;
 
       if (!community_id) {
-        return res.status(400).json({ success: false, message: 'Komunitas harus diisi' });
+        return res.status(400).json({ success: false, message: 'Community is required' });
       }
 
       const community = await Community.findByPk(community_id);
       if (!community) {
-        return res.status(404).json({ success: false, message: 'Komunitas tidak ditemukan' });
+        return res.status(404).json({ success: false, message: 'Community not found' });
       }
 
       const existing = await VolunteerApplication.findOne({
@@ -32,7 +32,7 @@ const volunteerController = {
       });
 
       if (existing && existing.status === 'pending') {
-        return res.status(409).json({ success: false, message: 'Sudah ada aplikasi pending' });
+        return res.status(409).json({ success: false, message: 'You already have a pending application for this community' });
       }
 
       const application = await VolunteerApplication.create({
@@ -44,22 +44,27 @@ const volunteerController = {
         status: 'pending'
       });
 
-      // Notify community rep
+      // Notify community representative
       if (community.community_rep_id) {
         await createNotif(
           community.community_rep_id,
           'volunteer',
-          'Pendaftar Volunteer Baru',
-          `Ada volunteer baru yang mendaftar ke komunitas ${community.name}`
+          'New Volunteer Application',
+          `A new volunteer has applied to join ${community.name}`
         );
       }
 
-      res.status(201).json({ success: true, message: 'Aplikasi volunteer berhasil disubmit', data: application });
+      res.status(201).json({
+        success: true,
+        message: 'Volunteer application submitted successfully',
+        data: application
+      });
     } catch (error) {
       next(error);
     }
   },
 
+  // FIXED: now sends notification to applicant on approve/reject
   async approveApplication(req, res, next) {
     try {
       const { applicationId } = req.params;
@@ -67,7 +72,7 @@ const volunteerController = {
 
       const application = await VolunteerApplication.findByPk(applicationId);
       if (!application) {
-        return res.status(404).json({ success: false, message: 'Aplikasi tidak ditemukan' });
+        return res.status(404).json({ success: false, message: 'Application not found' });
       }
 
       application.status = status;
@@ -79,9 +84,25 @@ const volunteerController = {
           volunteer_id: application.user_id,
           status: 'in_progress'
         });
+
+        // Notify the applicant — FIXED: was missing
+        await createNotif(
+          application.user_id,
+          'approved',
+          'Volunteer Application Approved',
+          'Congratulations! Your volunteer application has been approved by the community representative.'
+        );
+      } else if (status === 'rejected') {
+        // Notify the applicant on rejection too
+        await createNotif(
+          application.user_id,
+          'rejected',
+          'Volunteer Application Rejected',
+          'Unfortunately, your volunteer application was not accepted this time.'
+        );
       }
 
-      res.json({ success: true, message: 'Aplikasi diupdate', data: application });
+      res.json({ success: true, message: 'Application updated successfully', data: application });
     } catch (error) {
       next(error);
     }
@@ -121,7 +142,7 @@ const volunteerController = {
 
       const application = await VolunteerApplication.findByPk(applicationId);
       if (!application) {
-        return res.status(404).json({ success: false, message: 'Aplikasi tidak ditemukan' });
+        return res.status(404).json({ success: false, message: 'Application not found' });
       }
 
       application.status = status;
@@ -132,19 +153,19 @@ const volunteerController = {
         await createNotif(
           application.user_id,
           'approved',
-          'Aplikasi Volunteer Diterima',
-          'Selamat! Aplikasi volunteer kamu telah disetujui oleh community rep.'
+          'Volunteer Application Approved',
+          'Congratulations! Your volunteer application has been approved by the community representative.'
         );
       } else if (status === 'rejected') {
         await createNotif(
           application.user_id,
           'rejected',
-          'Aplikasi Volunteer Ditolak',
-          'Maaf, aplikasi volunteer kamu tidak diterima kali ini.'
+          'Volunteer Application Rejected',
+          'Unfortunately, your volunteer application was not accepted this time.'
         );
       }
 
-      res.json({ success: true, message: 'Status diupdate', data: application });
+      res.json({ success: true, message: 'Status updated successfully', data: application });
     } catch (error) {
       next(error);
     }
