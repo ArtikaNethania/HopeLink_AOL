@@ -1862,7 +1862,7 @@
         <div class="profile-layout">
           <div class="profile-sidebar-card">
             <div class="profile-avatar-ring">
-              <div class="profile-avatar-large" id="profile-avatar-large" style="background:linear-gradient(135deg,var(--purple),#c0392b);">A</div>
+              <div class="profile-avatar-large" id="profile-avatar-large">A</div>
             </div>
             <div class="profile-name-display" id="profile-name-display">Admin</div>
             <div class="profile-role-badge role-badge-admin">Administrator</div>
@@ -2654,6 +2654,11 @@ function avatarKey() {
 }
 
 function loadAvatar() {
+  if (user?.role === 'admin') {
+    // Admin always uses initials - no community photo
+    applyAvatar('');
+    return;
+  }
   // Prefer backend profile_picture, then commProfile avatar (for rep), then user-specific localStorage
   const storedComm = JSON.parse(localStorage.getItem('hl_comm_profile_' + (repCommunity?.community_id || '')) || '{}');
   const pic = user?.profile_picture || storedComm.avatarPhoto || commProfile?.avatarPhoto || localStorage.getItem(avatarKey()) || '';
@@ -2676,10 +2681,11 @@ function handleNavNotif() {
 function handleNavAvatar() {
   const isPendingRep = user?.role === 'community_rep' && repCommunity?.verification_status === 'pending';
   if (isPendingRep) {
-    openPendingModal(); // show pending modal instead
+    openPendingModal();
     return;
   }
   if (user?.role === 'community_rep') showRepSection('rep-profile');
+  else if (user?.role === 'admin') showAdminSection('admin-profile');
   else showDashSection('profile');
 }
 
@@ -4293,7 +4299,10 @@ function loadAdminProfile() {
   if (nameEl) nameEl.textContent = user.name || '-';
   if (emailEl) emailEl.textContent = user.email || '-';
   if (displayEl) displayEl.textContent = user.name || 'Admin';
-  if (avatarEl) avatarEl.textContent = (user.name||'A')[0].toUpperCase();
+  if (avatarEl) {
+    avatarEl.textContent = (user.name||'A')[0].toUpperCase();
+    avatarEl.style.background = ''; // use default purple-teal gradient
+  }
 }
 
 
