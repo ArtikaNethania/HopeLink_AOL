@@ -127,7 +127,7 @@ Stuff related to this project can be accessed through:
 | Resource | Link |
 |---|---|
 | GitHub Repository | [HopeLink_AOL](https://github.com/ArtikaNethania/HopeLink_AOL) |
-| Presentation (PPT) | [Canva](https://canva.link/62mcoj3z19w2y6u) |
+| Presentation (PPT) | [Canva](https://canva.link/42lafj4itl6tj74) |
 | UI Design (Figma) | [Figma](https://www.figma.com/design/f11L4GZhJsiD49dPonzLPv/AOL_SE?node-id=0-1&t=ab2GLXg6Pexc5qUg-1) |
 | Final Report | [SharePoint](https://binusianorgmy.sharepoint.com/personal/kezia_haryono_binus_ac_id/_layouts/15/guestaccess.aspx?share=IQATlNvynHMgSI-6AjXBg5dVAeMqkBj8vLbVRYtxWINquk&e=TxCFj9) |
 
